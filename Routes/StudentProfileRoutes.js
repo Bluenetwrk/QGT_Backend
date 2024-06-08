@@ -109,10 +109,13 @@ router.post("/verifyOtp", async (req, res) => {
 })
 
 // .....initial login.............................
-router.post("/Glogin", async (req, res) => {
-    try {
+router.post("/Glogin",  body('email').isEmail(), async (req, res) => {
+    try {        
     let { userId, gtoken, email, name, isApproved, ipAddress } = (req.body)
-
+        const error = validationResult(req)
+    if (!error.isEmpty()) {
+         return res.send("invalid email")
+    }
         let user = await StudentProfileModel.findOne({ email: email });
         if (user == null) {
             const user = await new StudentProfileModel({userId:userId, email:email, name:name, isApproved:isApproved , ipAddress:ipAddress})
@@ -133,12 +136,8 @@ var transporter = nodemailer.createTransport({
   };
   
   transporter.sendMail(mailOptions,  function(error, info){
-    if (error) {
-    //   console.log(error);
-    //    res.send("could not send the mail")
-    } else {
-    //   console.log('Email sent: ' + info.response);
-    //    res.send(" mail sent succesfully")
+    if (error) {    
+    } else {    
     }
   });
             res.send({status : "success" ,token : gtoken ,id: result._id})
@@ -148,7 +147,7 @@ var transporter = nodemailer.createTransport({
         }
 
     } catch (err) {
-        res.send(err)
+        res.send("backend error")
     }
 })
 // .........get userprofile to show in my profile and for update..........
@@ -161,6 +160,29 @@ router.get("/getProfile/:id", async (req, res) => {
         
     } catch (err) {
         res.send("back end error occured")
+    }
+})
+
+// login for Admin...
+
+router.post("/loginforAdmin", body('email').isEmail(), async(req, res)=>{
+    try{
+        let {email}=req.body
+        const error = validationResult(req)
+        if (!error.isEmpty()) {
+             return res.send("invalid email")
+        }
+        let user = await StudentProfileModel.findOne({email:email})
+        if(user==null){
+            res.send("user not registered")
+        }else{
+            // res.send(user)
+            let token = jwt.sign({ id: user._id }, secretKey)
+            res.send({ status: "success", id: user._id, token })
+        }
+    }catch(err){
+        res.send("back end error occured")
+
     }
 })
 
