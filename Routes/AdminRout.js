@@ -5,7 +5,27 @@ const AdminUpdateModel = require("../Schema/AdminUpdateSchema")
 
 const bcrypt = require("bcrypt")
 const jwt = require("jsonwebtoken")
-const secretKey = "aabbcc"
+const secretKey = "abcde"
+
+function verifyToken(req, res, next){
+    if(req.headers['authorization']){
+    let token = req.headers['authorization'].split(" ")[1]
+    let id = req.headers['authorization'].split(" ")[0]
+    if(token){
+        jwt.verify(token, secretKey, (err, valid)=>{
+    if(err){
+        res.send("invalid token")
+        }else{
+    let validid=valid.id
+    if(validid===id){
+        next()
+    }
+        }   })
+    }else{
+        res.send("Unauthorised Access")
+    }
+}
+}
 
 router.post("/adminRegister", async (req, res) => {
     let { email, password } = req.body
@@ -34,14 +54,11 @@ router.post("/adminLogin", async (req, res) => {
         if (user == null) {
             res.send("no user found")
         } else{
-            console.log("35",user._id)
-
             let hashedPassword = user.password
             let result = bcrypt.compareSync(password, hashedPassword)
             if(result==true){
                 let token = jwt.sign({id:user._id},secretKey)
                 res.send({status:"success", token, id: user._id})
-                console.log(user._id)
 
             }else{
                 res.send("incorrect password")
@@ -52,8 +69,6 @@ router.post("/adminLogin", async (req, res) => {
         res.send("backend error occred")
     }
 })
-
-
 
 router.put("/UpdateWebsite", async(req, res)=>{
     try{

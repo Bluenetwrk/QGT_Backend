@@ -12,7 +12,7 @@ const { MongoClient } = require("mongodb")
 const mongoose = require("mongoose");
 //const port = process.env.PORT
 const port = 8080
-//mongoose.connect(process.env.MONGO_URL)
+// mongoose.connect(process.env.MONGO_URL)
 mongoose.connect("mongodb+srv://blueimpluse:jobportal1234@cluster0.5dgcnm4.mongodb.net/jobportalMern")
 // mongoose.connect("mongodb://127.0.0.1:27017/Job-Portal-Database")
     .then((res) => { console.log("connected") })
@@ -23,18 +23,14 @@ app.use(cors())
 app.use(express.static('public'))
 
 
-
-
 app.use("/StudentProfile",StudentProfileRoutes)
 app.use("/EmpProfile",EmpProfileRoutes)
 app.use("/jobpost", jobpostRoutes)
 app.use("/admin", adminRoutes)
 app.use("/paymentAPI", PaymentRoute)
 
-
-
 app.use("*", (req, res) => {
-    res.send(" Cannot get from backend with **")
+    res.send(" Itwalkin could not fetch this API")
 })
 
 

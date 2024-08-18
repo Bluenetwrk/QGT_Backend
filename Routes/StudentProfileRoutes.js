@@ -6,6 +6,29 @@ const { body, validationResult } = require("express-validator")
 const jwt = require("jsonwebtoken")
 const secretKey = "abcde";
 var nodemailer = require('nodemailer');
+const importverifyToken = require('./JobpostsRoutes')
+const fs = require('fs')
+
+// Middleware
+function verifyToken(req, res, next){
+    if(req.headers['authorization']){
+    let token = req.headers['authorization'].split(" ")[1]
+    let id = req.headers['authorization'].split(" ")[0]
+    if(token){
+        jwt.verify(token, secretKey, (err, valid)=>{
+    if(err){
+        res.send("invalid token")
+        }else{
+    let validid=valid.id
+    if(validid===id){
+        next()
+    }
+        }   })
+    }else{
+        res.send("Unauthorised Access")
+    }
+}
+}
 
 
 const multer = require('multer');
@@ -28,7 +51,7 @@ router.put("/uploadImage/:id",upload.single('image'), async (req, res)=>{
     try{
     let result= await StudentProfileModel.updateOne(
         {_id:req.params.id},
-        {$set:{image: `http://www.itwalkin.com:8080/Images/${imagePath}`}}
+        {$set:{image: `http://itwalkin-backend.onrender.com/Images/${imagePath}`}}
     )
     if(result){
     res.send(result)
@@ -36,16 +59,27 @@ router.put("/uploadImage/:id",upload.single('image'), async (req, res)=>{
 }catch(err){
     res.send("back error occured")
 }
-
 })
 
 // delete image for studentProfile....
 router.put("/deleteImage/:id", async (req, res) => {
+    const comingImagepath=req.body.image
+    const trimImagepath=comingImagepath.replace("http://itwalkin-backend.onrender.com/Images/","")
+    const filepath=`public/Images/${trimImagepath}`
 
     try {
         let result = await StudentProfileModel.updateOne(           
             {_id: req.params.id}, 
-            {$unset:req.body}
+            {$unset:req.body},
+            fs.unlinkSync(filepath, (err) => {
+                if (err) {
+                //   console.error(`Error removing file: ${err}`);
+                  return 0;
+                }else{
+                    return 1
+                    // console.log("sucessss")
+                }
+            })
          )
         if (result) {
             res.send("success")
@@ -124,12 +158,12 @@ router.post("/Glogin",  body('email').isEmail(), async (req, res) => {
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'parvaizmahroo1@gmail.com',
-      pass: 'qdmz vxlw ojcx fyoj'
+      user: 'bluenetwrk@gmail.com',
+      pass: 'vwzv axcq ywrw bxjd'
     }
   });
   var mailOptions = {
-    from: 'parvaizmahroo1@gmail.com',
+    from: 'bluenetwrk@gmail.com',
     to: result.email,
     subject: `Successfully Registered with Itwalkin`,
     html: '<p>Welcome to Itwalkin Job Portal</p>'+'<p>click <a href="http://www.itwalkin.com">itwalkin</a> to explore more </p>'
@@ -140,8 +174,11 @@ var transporter = nodemailer.createTransport({
     } else {    
     }
   });
+  let gtoken = jwt.sign({id:result._id},secretKey)
+            console.log("user email 144", gtoken)
             res.send({status : "success" ,token : gtoken ,id: result._id})
         } else {
+  let gtoken = jwt.sign({id:user._id},secretKey)
             res.send({status : "success" ,token : gtoken ,id: user._id})
             // console.log("user email :", user)
         }
@@ -151,7 +188,7 @@ var transporter = nodemailer.createTransport({
     }
 })
 // .........get userprofile to show in my profile and for update..........
-router.get("/getProfile/:id", async (req, res) => {
+router.get("/getProfile/:id", verifyToken, async (req, res) => {
     try {
         let result = await StudentProfileModel.findOne({ _id: req.params.id })
         if (result) {
@@ -182,12 +219,11 @@ router.post("/loginforAdmin", body('email').isEmail(), async(req, res)=>{
         }
     }catch(err){
         res.send("back end error occured")
-
     }
 })
 
 // .....update full student profile...........
-router.put("/updatProfile/:id",  async (req, res) => {
+router.put("/updatProfile/:id", verifyToken,  async (req, res) => {
     try {
 
         let result = await StudentProfileModel.updateOne(
@@ -203,6 +239,16 @@ router.put("/updatProfile/:id",  async (req, res) => {
     }
 })
 
+
+// ....get total number of Jobseekers for Admin and also for Emplyee search all condidiate..
+router.get("/getAllJobseekers", verifyToken, async(req, res)=>{
+    try{
+        let result= await StudentProfileModel.find()
+        res.send(result)
+    }catch(err){
+        res.send("backend error occured")
+    }
+})
 //  getting student-profile with applied user id for Employee......
 router.get("/getAppliedProfileByIds/:id", async (req, res) => {
     let comingArray = req.params.id
@@ -225,16 +271,6 @@ router.get("/getAppliedProfileByIds/:id", async (req, res) => {
 })
 
 
-
-// ....get total number of Jobseekers for Admin..
-router.get("/getAllJobseekers", async(req, res)=>{
-    try{
-        let result= await StudentProfileModel.find()
-        res.send(result)
-    }catch(err){
-        res.send("backend error occured")
-    }
-})
 
 // delete jobseeker Admin API
 router.delete("/deleteProfile/:id", async(req, res)=>{

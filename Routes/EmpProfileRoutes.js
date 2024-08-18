@@ -9,8 +9,28 @@ const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 var nodemailer = require('nodemailer');
+const fs = require('fs')
 
 
+function verifyToken(req, res, next){
+    if(req.headers['authorization']){
+    let token = req.headers['authorization'].split(" ")[1]
+    let id = req.headers['authorization'].split(" ")[0]
+    if(token){
+        jwt.verify(token, secretKey, (err, valid)=>{
+    if(err){
+        res.send("invalid token")
+        }else{
+    let validid=valid.id
+    if(validid===id){
+        next()
+    }
+        }   })
+    }else{
+        res.send("Unauthorised Access")
+    }
+}
+}
 
 
 const storage = multer.diskStorage({
@@ -29,10 +49,7 @@ router.put("/uploadImage/:id",upload.single('image'), async (req, res)=>{
     try{
     let result= await EmpProfileModel.updateOne(
         {_id:req.params.id},
-        {$set:{image: `http://www.itwalkin.com:8080/Images/${imagePath}`}}
-
-        
-
+        {$set:{image: `http://itwalkin-backend.onrender.com/Images/${imagePath}`}}       
     )
     if(result){
     res.send(result)
@@ -42,42 +59,25 @@ router.put("/uploadImage/:id",upload.single('image'), async (req, res)=>{
 }
 })
 
-
-
-// const storage = multer.diskStorage({
-//     destination: function(req, file, cb){
-//         cb(null, 'public/Images');
-//     },
-//     filename: function(req, file, cb) {   
-//         cb(null, uuidv4() + "_" + Date.now() + path.extname(file.originalname));
-//     }
-// });
-
-// const upload = multer({ storage: storage });
-
-// router.put("/uploadImage/:id",upload.single('image'), async (req, res)=>{
-//     imagePath = req.file.filename
-//     try{
-//     let result= await EmpProfileModel.updateOne(
-//         {_id:req.params.id},
-//         {$set:{image: `http://itwalkin.in:8080/Images/${imagePath}`}}
-//     )
-//     if(result){
-//     res.send(result)
-// }
-// }catch(err){
-//     res.send("back error occured")
-// }
-
-// })
-
 // delete logo rout.........
 
 router.put("/deleteImage/:id", async (req, res) => {
+    const comingImagepath=req.body.image
+    const trimImagepath=comingImagepath.replace("http://itwalkin-backend.onrender.com/Images/","")
+    const filepath=`public/Images/${trimImagepath}`
     try {
         let result = await EmpProfileModel.updateOne(           
             {_id: req.params.id}, 
-            {$unset:req.body}
+            {$unset:req.body},
+            fs.unlinkSync(filepath, (err) => {
+                if (err) {
+                //   console.error(`Error removing file: ${err}`);
+                  return 0;
+                }else{
+                    return 1
+                    // console.log("sucessss")
+                }
+            })
          )
         if (result) {
             res.send("success")
@@ -130,6 +130,7 @@ router.post("/verifyOtp", async (req, res) => {
             if (savedUser) {
                 
                 let token = jwt.sign({ id: savedUser._id }, secretKey)
+
                 res.send({ status: "success", token: token, id: savedUser._id })
             }
         }else{
@@ -141,12 +142,10 @@ router.post("/verifyOtp", async (req, res) => {
     }
 })
 
-
-
-
 router.post("/Glogin", async (req, res) => {
     try {
     let { userId, gtoken, email, name, isApproved, ipAddress } = (req.body)
+
         let user = await EmpProfileModel.findOne({ email: email });
         if (user == null) {
             const user = await new EmpProfileModel({ email: email, name: name,  userId : userId, isApproved:isApproved, ipAddress:ipAddress })
@@ -154,12 +153,12 @@ router.post("/Glogin", async (req, res) => {
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'parvaizmahroo1@gmail.com',
-      pass: 'qdmz vxlw ojcx fyoj'
+      user: 'bluenetwrk@gmail.com',
+      pass: 'vwzv axcq ywrw bxjd'
     }
   });
   var mailOptions = {
-    from: 'parvaizmahroo1@gmail.com',
+    from: 'bluenetwrk@gmail.com',
     to: result.email,
     subject: `Successfully Registered with Itwalkin`,
     html: '<p>Welcome to Itwalkin Job Portal</p>'+'<p>click <a href="http://www.itwalkin.com">itwalkin</a> to explore more </p>'
@@ -174,18 +173,40 @@ var transporter = nodemailer.createTransport({
     //    res.send(" mail sent succesfully")
     }
   });
+  let gtoken = jwt.sign({id:result._id},secretKey)
             res.send({status : "success" ,token : gtoken ,id: result._id})
         } else {
+            let gtoken = jwt.sign({id:user._id},secretKey)
             res.send({status : "success" ,token : gtoken ,id: user._id})
             // console.log("user email :", user)
         }
-
     } catch (err) {
         res.send(err)
     }
 })
+// login for Admin...
+router.post("/loginforAdmin", body('email').isEmail(), async(req, res)=>{
+    try{
+        let {email}=req.body
+        const error = validationResult(req)
+        if (!error.isEmpty()) {
+             return res.send("invalid email")
+        }
+        let user = await EmpProfileModel.findOne({email:email})
+        if(user==null){
+            res.send("user not registered")
+        }else{
+            // res.send(user)
+            let token = jwt.sign({ id: user._id }, secretKey)
+            res.send({ status: "success", id: user._id, token })
+        }
+    }catch(err){
+        res.send("back end error occured")
+    }
+})
+
 // get profile for my profile  and update frofile UI
-router.get("/getProfile/:id", async (req, res) => {
+router.get("/getProfile/:id", verifyToken, async (req, res) => {
     try {
         let result = await EmpProfileModel.findOne({ _id: req.params.id })
         if (result) {
@@ -196,7 +217,6 @@ router.get("/getProfile/:id", async (req, res) => {
         res.send("back end error occured")
     }
 })
-
 // get only company logo from from profile for job posts
 router.get("/getLogo/:id", async (req, res) => {
     try {
@@ -209,7 +229,7 @@ router.get("/getLogo/:id", async (req, res) => {
     }
 })
 // update full profile
-router.put("/updatProfile/:id",  async (req, res) => {
+router.put("/updatProfile/:id", verifyToken, async (req, res) => {
     try {
         let result = await EmpProfileModel.updateOne(
             {_id: req.params.id},
@@ -226,7 +246,7 @@ router.put("/updatProfile/:id",  async (req, res) => {
 
 
 // ....get total number of Employees for Admin..
-router.get("/getAllEmployees", async(req, res)=>{
+router.get("/getAllEmployees", verifyToken, async(req, res)=>{
     try{
         let result= await EmpProfileModel.find()
         res.send(result)
@@ -247,7 +267,7 @@ router.delete("/deleteEmployee/:id", async(req,res)=>{
     }
 })
 // update for approval from admin
-router.put("/setApproval/:id", async(req, res)=>{
+router.put("/setApproval/:id", verifyToken, async(req, res)=>{
     try{
         let result= await EmpProfileModel.updateOne(
             {_id:req.params.id},
@@ -262,7 +282,7 @@ router.put("/setApproval/:id", async(req, res)=>{
 })
 
 // update for Reject from admin
-router.put("/isReject/:id", async(req, res)=>{
+router.put("/isReject/:id", verifyToken, async(req, res)=>{
     try{
         let result= await EmpProfileModel.updateOne(
             {_id:req.params.id},
@@ -277,7 +297,7 @@ router.put("/isReject/:id", async(req, res)=>{
 })
 // isOnhold status from admin
 
-router.put("/isOnhold/:id", async(req, res)=>{
+router.put("/isOnhold/:id", verifyToken, async(req, res)=>{
     try{
         let result= await EmpProfileModel.updateOne(
             {_id:req.params.id},
@@ -293,7 +313,7 @@ router.put("/isOnhold/:id", async(req, res)=>{
 
 
 
-router.get("/getApprovedEmp", async(req, res)=>{
+router.get("/getApprovedEmp", verifyToken, async(req, res)=>{
     try{
         let result = await EmpProfileModel.aggregate([{$match : { isApproved : true }}])
 
@@ -308,7 +328,7 @@ router.get("/getApprovedEmp", async(req, res)=>{
 })
 // find all which are not Approved Employeers for admin
 
-router.get("/getNotApprovedEmp", async(req, res)=>{
+router.get("/getNotApprovedEmp", verifyToken, async(req, res)=>{
     try{
         let result = await EmpProfileModel.aggregate([{$match : { isApproved : false }}])
         if(result){
@@ -320,7 +340,7 @@ router.get("/getNotApprovedEmp", async(req, res)=>{
 })
 // find FIRM Company Type
 
-router.get("/getFirmOrganisation", async(req, res)=>{
+router.get("/getFirmOrganisation", verifyToken, async(req, res)=>{
     try{
         let result = await EmpProfileModel.aggregate([{$match:{TypeofOrganisation:"Firm"}}])
         if(result){
@@ -332,7 +352,7 @@ router.get("/getFirmOrganisation", async(req, res)=>{
 })
 // find Pvt.Ltd. Company Type
 
-router.get("/getPvt.Ltd.Organisation", async(req, res)=>{
+router.get("/getPvt.Ltd.Organisation", verifyToken, async(req, res)=>{
     try{
         let result = await EmpProfileModel.aggregate([{$match:{TypeofOrganisation:"Pvt.Ltd."}}])
         if(result){
@@ -344,7 +364,7 @@ router.get("/getPvt.Ltd.Organisation", async(req, res)=>{
 })
 // find Consultancy Company Type
 
-router.get("/getConsultancyOrganisation", async(req, res)=>{
+router.get("/getConsultancyOrganisation", verifyToken, async(req, res)=>{
     try{
         let result = await EmpProfileModel.aggregate([{$match:{TypeofOrganisation:"Consultancy"}}])
         if(result){
@@ -365,7 +385,7 @@ end.setUTCHours(23,59,59,999);
 let startDay =start.toUTCString() 
 let endDay=end.toUTCString()
 
-router.get("/getTodaysEmpProfile", async(req, res)=>{ 
+router.get("/getTodaysEmpProfile", verifyToken, async(req, res)=>{ 
     try{
         let result = await EmpProfileModel.find({ createdAt: {$gte: startDay, $lte:endDay} })
         if(result){
@@ -380,7 +400,7 @@ router.get("/getTodaysEmpProfile", async(req, res)=>{
 
 // message sending from admin
 
-router.put("/sendMessage/:id", async(req, res)=>{
+router.put("/sendMessage/:id", verifyToken, async(req, res)=>{
     try{
         let result = await EmpProfileModel.updateOne({
             _id:req.params.id},
@@ -394,10 +414,7 @@ router.put("/sendMessage/:id", async(req, res)=>{
     }
 })
 
-
-
 // ................................Login with password.........................
-
 
 
 module.exports = router

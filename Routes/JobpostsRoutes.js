@@ -5,12 +5,65 @@ const JobAppliedModel = require("../Schema/JobAppliedSchema")
 const StudentProfileModel= require("../Schema/StudentProfileSchema")
 var nodemailer = require('nodemailer');
 
-
 const { MongoClient } = require("mongodb")
 // const {getData} = require("../mongodb")
 const {ObjectID} = require("mongodb")
+const {gtoken} = require('./EmpProfileRoutes')
+const secretKey = "abcde"
+const jwt = require("jsonwebtoken")
 
-router.post("/jobpost", async (req, res) => {
+// Middleware
+function verifyToken(req, res, next){
+    if(req.headers['authorization']){
+    let token = req.headers['authorization'].split(" ")[1]
+    let id = req.headers['authorization'].split(" ")[0]
+    if(token){
+        jwt.verify(token, secretKey, (err, valid)=>{
+    if(err){
+        res.send("invalid token")
+        }else{
+    let validid=valid.id
+    if(validid===id){
+        next()
+    }
+        }   })
+    }else{
+        res.send("Unauthorised Access")
+    }
+}
+}
+
+
+// ............get all jobs for all......
+router.get("/getjobs", verifyToken, async (req, res) => {
+    try {
+        let jobs = await JobpostsModel.find()
+        res.send(jobs)
+    } catch (err) {
+        res.status(401).send("server issue")
+    }
+})
+
+function verifyHomeJobs(req, res, next){
+    let valid=req.headers['authorization']
+    if(valid==='BlueItImpulseWalkinIn'){
+        next()
+}else{
+    res.send("Unauthorised Access")
+}
+}
+// ............get all Home jobs for all......
+router.get("/getHomejobs", verifyHomeJobs, async (req, res) => {
+    try {
+        let jobs = await JobpostsModel.find().select()
+        res.send(jobs)
+    } catch (err) {
+        res.status(401).send("server issue")
+    }
+})
+
+// employee job postings
+router.post("/jobpost", verifyToken, async (req, res) => {
     try {
         const {Logo, empId, companyName, jobTitle, jobDescription, jobtype, salaryRange, jobLocation, qualification, experiance, skills } = (req.body)
         if ( !jobDescription || !companyName || !experiance || !jobLocation || !skills) {
@@ -25,43 +78,8 @@ router.post("/jobpost", async (req, res) => {
     }
 })
 
-
-// .................apply for jobs...............................
-    //  Experiance:Experiance, age:age, jobSeekerId:jobSeekerId,jobId:jobId, Skills:Skills, Qualification:Qualification, NoticePeriod:NoticePeriod, ExpectedSalary: ExpectedSalary,  name:name, email:email, phoneNumber:phoneNumber, currentCTC: currentCTC
-
-// router.post("/saveAppliedJob", async (req, res) => {
-//     console.log(req.body)
- 
-//     const{_id, Experiance, age, Skills, Qualification, NoticePeriod, ExpectedSalary,  name, email, phoneNumber, currentCTC} = (req.body.userProfile)
-//     const {jobId}=req.body
-//     try {
-
-//          let appliedJob = new JobAppliedModel({
-//      Experiance:Experiance, age:age, jobSeekerId:_id,jobId:jobId, Skills:Skills, Qualification:Qualification, NoticePeriod:NoticePeriod, ExpectedSalary: ExpectedSalary,  name:name, email:email, phoneNumber:phoneNumber, currentCTC: currentCTC
-
-//          })
-//          let result = await appliedJob.save()
-//          res.send(result)
-
- 
-//      }catch (err) {
-//          res.status(401).send("server issue")
-//          console.log(err)
-//      }
-//  })
-
-// ............get all jobs for all......
-router.get("/getjobs", async (req, res) => {
-    try {
-        let jobs = await JobpostsModel.find()
-        res.send(jobs)
-
-    } catch (err) {
-        res.status(401).send("server issue")
-    }
-})
 // .........getJobs for job details...........
-router.get("/getjobs/:id", async (req, res) => {
+router.get("/getjobs/:id",verifyHomeJobs, async (req, res) => {
     try {
         let jobs = await JobpostsModel.findOne({ _id: req.params.id })
         res.send(jobs)
@@ -70,7 +88,7 @@ router.get("/getjobs/:id", async (req, res) => {
     }
 })
 // ................get jobs for myappliedjobs for jobseeker.......
-router.get("/getMyAppliedjobs/:id", async (req, res) => {
+router.get("/getMyAppliedjobs/:id", verifyToken, async (req, res) => {
     try {
         let jobs = await JobpostsModel.find({jobSeekerId: req.params.id })
         res.send(jobs)
@@ -79,7 +97,7 @@ router.get("/getMyAppliedjobs/:id", async (req, res) => {
     }
 })
 // ................get my posted jobs for emplyee.......
-router.get("/getPostedjobs/:id", async (req, res) => {
+router.get("/getPostedjobs/:id", verifyToken, async (req, res) => {
     try {
         let jobs = await JobpostsModel.find({ empId: req.params.id })
         res.send(jobs)
@@ -88,7 +106,7 @@ router.get("/getPostedjobs/:id", async (req, res) => {
     }
 })
 // .......... get jobs for update for emplyee........
-router.get("/getJobForUpdate/:id", async (req, res) => {
+router.get("/getJobForUpdate/:id",verifyToken, async (req, res) => {
     try {
         let jobs = await JobpostsModel.findOne({ _id: req.params.id })
         res.send(jobs)
@@ -97,7 +115,7 @@ router.get("/getJobForUpdate/:id", async (req, res) => {
     }
 })
 // ..........update for emplyee job posts............
-router.put("/updatPostedJob/:id", async (req, res) => {
+router.put("/updatPostedJob/:id", verifyToken, async (req, res) => {
     try {
         let result = await JobpostsModel.updateOne(
            { _id: req.params.id},
@@ -111,7 +129,7 @@ router.put("/updatPostedJob/:id", async (req, res) => {
     }
 })
 // ...........delete posted job for employee..............
-router.delete("/deleteProduct/:id", async (req, res) => {
+router.delete("/deleteProduct/:id",verifyToken, async (req, res) => {
     let result = await JobpostsModel.deleteOne({ _id: req.params.id })
     if (result) {
         res.send(result)
@@ -119,15 +137,6 @@ router.delete("/deleteProduct/:id", async (req, res) => {
         res.send("error")
     }
 })
-// ...................job for apply ...............
-// router.get("/findjob/:id", async (req, res) => {
-//     try {
-//         let jobs = await JobpostsModel.findOne({ _id: req.params.id })
-//         res.send(jobs)
-//     } catch (err) {
-//         res.status(401).send("server issue", err)
-//     }
-// })
 
 // .............Search.................
 router.get("/searchJob/:key", async(req,res)=>{
@@ -153,23 +162,9 @@ router.get("/searchJob/:key", async(req,res)=>{
     res.send("error occured")
 }   
 })
-// ................... apply jobs for new collection called applied jobs saved onlyJob id and userID........
-// router.post("/ApplyforJob", async (req, res) => {
-//     try {
-//         let user = new JobAppliedModel(req.body)
-//         let result = await user.save()
-                    
-//         if (result) {
-//             res.send({status:"success", result})
-//         }         
-//     } catch (err) {
-//         res.send("back end error occured")
-//     }
-// })
-
 
 // ..........update for job applyjobs for job seeker..................
-router.put("/updatforJobApply/:id", async (req, res) => {
+router.put("/updatforJobApply/:id", verifyToken, async (req, res) => {
     let userId  = req.body.jobSeekerId
 
     try {
@@ -186,12 +181,12 @@ router.put("/updatforJobApply/:id", async (req, res) => {
             var transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                  user: 'parvaizmahroo1@gmail.com',
-                  pass: 'qdmz vxlw ojcx fyoj'
+       user: 'bluenetwrk@gmail.com',
+      pass: 'vwzv axcq ywrw bxjd'
                 }
               });
               var mailOptions = {
-                from: 'parvaizmahroo1@gmail.com',
+                from: 'bluenetwrk@gmail.com',
                 to: Usermail,
                 subject: `Succesfully Applied for the Job ${JobTile}`,
                 text: "you have applied for job successfully",
@@ -221,7 +216,7 @@ router.put("/updatforJobApply/:id", async (req, res) => {
 
 // .......upate for undoJobApply.............
 
-router.put("/updatforUndoJobApplied/:id", async (req, res) => {
+router.put("/updatforUndoJobApplied/:id",verifyToken, async (req, res) => {
     try {
         let result = await JobpostsModel.updateOne(           
             {_id: req.params.id}, 
@@ -339,9 +334,5 @@ router.post("/getBothjobFilter/:id", async(req, res)=>{
         // console.log(err)
     }
 })
-
-
-
-
 
 module.exports = router
