@@ -49,7 +49,7 @@ router.put("/uploadImage/:id",upload.single('image'), async (req, res)=>{
     try{
     let result= await EmpProfileModel.updateOne(
         {_id:req.params.id},
-        {$set:{image: `http://itwalkin-backend.onrender.com/Images/${imagePath}`}}       
+        {$set:{image: `https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/${imagePath}`}}       
     )
     if(result){
     res.send(result)
@@ -63,7 +63,7 @@ router.put("/uploadImage/:id",upload.single('image'), async (req, res)=>{
 
 router.put("/deleteImage/:id", async (req, res) => {
     const comingImagepath=req.body.image
-    const trimImagepath=comingImagepath.replace("http://itwalkin-backend.onrender.com/Images/","")
+    const trimImagepath=comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/","")
     const filepath=`public/Images/${trimImagepath}`
     try {
         let result = await EmpProfileModel.updateOne(           
