@@ -53,6 +53,7 @@ router.put("/uploadImage/:id",upload.single('image'), async (req, res)=>{
     )
     if(result){
     res.send(result)
+    console.log(result)
 }
 }catch(err){
     res.send("back error occured")
@@ -65,13 +66,14 @@ router.put("/deleteImage/:id", async (req, res) => {
     const comingImagepath=req.body.image
     const trimImagepath=comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/","")
     const filepath=`public/Images/${trimImagepath}`
+
     try {
         let result = await EmpProfileModel.updateOne(           
             {_id: req.params.id}, 
             {$unset:req.body},
             fs.unlinkSync(filepath, (err) => {
                 if (err) {
-                //   console.error(`Error removing file: ${err}`);
+                  console.error(`Error removing file: ${err}`);
                   return 0;
                 }else{
                     return 1
@@ -206,7 +208,15 @@ router.post("/loginforAdmin", body('email').isEmail(), async(req, res)=>{
 })
 
 // get profile for my profile  and update frofile UI
-router.get("/getProfile/:id", verifyToken, async (req, res) => {
+function CheckComp(req, res, next){
+    let valid=req.headers['authorization']
+    if(valid==='BlueItImpulseWalkinIn'){
+        next()
+}else{
+    res.send("Unauthorised Access")
+}
+}
+router.get("/getProfile/:id", CheckComp, async (req, res) => {
     try {
         let result = await EmpProfileModel.findOne({ _id: req.params.id })
         if (result) {
