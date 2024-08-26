@@ -49,11 +49,11 @@ router.put("/uploadImage/:id",upload.single('image'), async (req, res)=>{
     try{
     let result= await EmpProfileModel.updateOne(
         {_id:req.params.id},
-        {$set:{image: `https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/${imagePath}`}}       
+        // {$set:{image: `https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/${imagePath}`}}       
+        {$set:{image: `http://localhost:8080/Images/${imagePath}`}}       
     )
     if(result){
     res.send(result)
-    console.log(result)
 }
 }catch(err){
     res.send("back error occured")
@@ -64,7 +64,8 @@ router.put("/uploadImage/:id",upload.single('image'), async (req, res)=>{
 
 router.put("/deleteImage/:id", async (req, res) => {
     const comingImagepath=req.body.image
-    const trimImagepath=comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/","")
+    // const trimImagepath=comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/","")
+    const trimImagepath=comingImagepath.replace("http://localhost:8080/Images/","")
     const filepath=`public/Images/${trimImagepath}`
 
     try {
@@ -143,15 +144,15 @@ router.post("/verifyOtp", async (req, res) => {
         res.send("backend issue")
     }
 })
-
 router.post("/Glogin", async (req, res) => {
     try {
     let { userId, gtoken, email, name, isApproved, ipAddress } = (req.body)
 
         let user = await EmpProfileModel.findOne({ email: email });
         if (user == null) {
-            const user = await new EmpProfileModel({ email: email, name: name,  userId : userId, isApproved:isApproved, ipAddress:ipAddress })
-            const result = await user.save(user)                     
+        const user = await new EmpProfileModel({ email: email, name: name,  userId : userId, 
+            isApproved:isApproved, ipAddress:ipAddress})
+        const result = await user.save(user)                     
 var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -177,16 +178,24 @@ var transporter = nodemailer.createTransport({
   });
   let gtoken = jwt.sign({id:result._id},secretKey)
             res.send({status : "success" ,token : gtoken ,id: result._id})
-        } else {
+        } else {   
+            let Nowtime = Date()  
+            let result = await EmpProfileModel.updateOne(
+                {_id: user._id},
+               {$set: {LogedInTime:Nowtime}}
+            )
+            console.log(result)
+
             let gtoken = jwt.sign({id:user._id},secretKey)
             res.send({status : "success" ,token : gtoken ,id: user._id})
-            // console.log("user email :", user)
         }
     } catch (err) {
         res.send(err)
     }
 })
-// login for Admin...
+
+
+// login for Admin in search params...
 router.post("/loginforAdmin", body('email').isEmail(), async(req, res)=>{
     try{
         let {email}=req.body
@@ -243,8 +252,8 @@ router.put("/updatProfile/:id", verifyToken, async (req, res) => {
     try {
         let result = await EmpProfileModel.updateOne(
             {_id: req.params.id},
-           {$set:req.body
-         })
+           {$set:req.body}
+        )
         if (result) {
             res.send("success")
         } 
@@ -423,6 +432,21 @@ router.put("/sendMessage/:id", verifyToken, async(req, res)=>{
         res.send("some error occured")
     }
 })
+//  find all email only of Emplyees
+
+router.get("/getAllemail", async(req, res)=>{
+    try{
+        let result= await EmpProfileModel.find({}, { email: 1, _id:0 })
+        res.send( result)
+    }catch(err){
+        res.send("serror error")
+    }
+})
+
+
+// find last login
+
+
 
 // ................................Login with password.........................
 

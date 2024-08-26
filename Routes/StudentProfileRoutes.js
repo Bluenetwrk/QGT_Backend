@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const StudentProfileModel= require("../Schema/StudentProfileSchema")
+const StudentProfileModel = require("../Schema/StudentProfileSchema")
 const bcrypt = require("bcrypt")
 const { body, validationResult } = require("express-validator")
 const jwt = require("jsonwebtoken")
@@ -10,24 +10,25 @@ const importverifyToken = require('./JobpostsRoutes')
 const fs = require('fs')
 
 // Middleware
-function verifyToken(req, res, next){
-    if(req.headers['authorization']){
-    let token = req.headers['authorization'].split(" ")[1]
-    let id = req.headers['authorization'].split(" ")[0]
-    if(token){
-        jwt.verify(token, secretKey, (err, valid)=>{
-    if(err){
-        res.send("invalid token")
-        }else{
-    let validid=valid.id
-    if(validid===id){
-        next()
+function verifyToken(req, res, next) {
+    if (req.headers['authorization']) {
+        let token = req.headers['authorization'].split(" ")[1]
+        let id = req.headers['authorization'].split(" ")[0]
+        if (token) {
+            jwt.verify(token, secretKey, (err, valid) => {
+                if (err) {
+                    res.send("invalid token")
+                } else {
+                    let validid = valid.id
+                    if (validid === id) {
+                        next()
+                    }
+                }
+            })
+        } else {
+            res.send("Unauthorised Access")
+        }
     }
-        }   })
-    }else{
-        res.send("Unauthorised Access")
-    }
-}
 }
 
 
@@ -36,55 +37,57 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 
 const storage = multer.diskStorage({
-    destination: function(req, file, cb){
+    destination: function (req, file, cb) {
         cb(null, 'public/Images');
     },
-    filename: function(req, file, cb) {   
+    filename: function (req, file, cb) {
         cb(null, uuidv4() + "_" + Date.now() + path.extname(file.originalname));
     }
 });
 
 const upload = multer({ storage: storage });
 
-router.put("/uploadImage/:id",upload.single('image'), async (req, res)=>{
+router.put("/uploadImage/:id", upload.single('image'), async (req, res) => {
     imagePath = req.file.filename
-    console.log("51 line",imagePath)
+    console.log("51 line", imagePath)
 
-    try{
-    let result= await StudentProfileModel.updateOne(
-        {_id:req.params.id},
-        {$set:{image: `https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/${imagePath}`}}        
-    )
-    if(result){
-    res.send(result)
-}
-}catch(err){
-    res.send("back error occured")
-}
+    try {
+        let result = await StudentProfileModel.updateOne(
+            { _id: req.params.id },
+            // { $set: { image: `https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/${imagePath}` } }
+            { $set: { image: `http://localhost:8080/Images/${imagePath}` } }
+        )
+        if (result) {
+            res.send(result)
+        }
+    } catch (err) {
+        res.send("back error occured")
+    }
 })
 
 // delete image for studentProfile....
 router.put("/deleteImage/:id", async (req, res) => {
-    const comingImagepath=req.body.image
-    const trimImagepath=comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/","")
-    const filepath=`public/Images/${trimImagepath}`
+    const comingImagepath = req.body.image
+    // const trimImagepath = comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/", "")
+    const trimImagepath = comingImagepath.replace("http://localhost:8080/Images/", "")
+    const filepath = `public/Images/${trimImagepath}`
     try {
-        let result = await StudentProfileModel.updateOne(           
-            {_id: req.params.id}, 
-            {$unset:req.body},
+        let result = await StudentProfileModel.updateOne(
+            { _id: req.params.id },
+            { $unset: req.body },
             fs.unlinkSync(filepath, (err) => {
                 if (err) {
-                //   console.error(`Error removing file: ${err}`);
-                  return 0;
-                }else{
+                    //   console.error(`Error removing file: ${err}`);
+                    return 0;
+                } else {
                     return 1
                     // console.log("sucessss")
                 }
             })
-         )
+        )
         if (result) {
             res.send("success")
-        }                     
+        }
     } catch (err) {
         res.send("back end error occured")
 
@@ -99,28 +102,28 @@ const client = require('twilio')(accountSid, authToken);
 let OTP
 let PhoneNumber
 
-router.post("/otpSignUp", async (req, res)=>{
+router.post("/otpSignUp", async (req, res) => {
     // console.log(req.body.PhoneNumber)
-    PhoneNumber =req.body.PhoneNumber
-    try{
-    OTP = ""
-    let digits ="0123456789"
-    for(let i=0; i<4; i++){
-         OTP += digits[Math.floor(Math.random()*10)];
-    }
-client.messages
-    .create({
-        body:"your otp verification is " + OTP,
+    PhoneNumber = req.body.PhoneNumber
+    try {
+        OTP = ""
+        let digits = "0123456789"
+        for (let i = 0; i < 4; i++) {
+            OTP += digits[Math.floor(Math.random() * 10)];
+        }
+        client.messages
+            .create({
+                body: "your otp verification is " + OTP,
                 from: '+13526786317',
-        to: `+91${PhoneNumber}`
-    })
-    res.send("otp sent")
-}catch(err){
-    res.send("something went wrong")
-}
+                to: `+91${PhoneNumber}`
+            })
+        res.send("otp sent")
+    } catch (err) {
+        res.send("something went wrong")
+    }
 })
 router.post("/verifyOtp", async (req, res) => {
-    const { isApproved , ipAddress} = req.body
+    const { isApproved, ipAddress } = req.body
     let otp = req.body.otp
     try {
         if (otp !== OTP) {
@@ -128,15 +131,15 @@ router.post("/verifyOtp", async (req, res) => {
         }
         let user = await StudentProfileModel.findOne({ phoneNumber: PhoneNumber })
         if (user == null) {
-            let saveUser = await StudentProfileModel({ phoneNumber: PhoneNumber, isApproved: isApproved , ipAddress:ipAddress})
+            let saveUser = await StudentProfileModel({ phoneNumber: PhoneNumber, isApproved: isApproved, ipAddress: ipAddress })
             let savedUser = await saveUser.save()
-            if (savedUser) {                
+            if (savedUser) {
                 let token = jwt.sign({ id: savedUser._id }, secretKey)
                 res.send({ status: "success", token: token, id: savedUser._id })
             }
-        }else{
-        let token = jwt.sign({ id: user._id }, secretKey)
-        res.send({ status: "success", token: token, id: user._id })
+        } else {
+            let token = jwt.sign({ id: user._id }, secretKey)
+            res.send({ status: "success", token: token, id: user._id })
         }
     } catch (err) {
         res.send("backend issue")
@@ -144,44 +147,47 @@ router.post("/verifyOtp", async (req, res) => {
 })
 
 // .....initial login.............................
-router.post("/Glogin",  body('email').isEmail(), async (req, res) => {
-    try {        
-    let { userId, gtoken, email, name, isApproved, ipAddress } = (req.body)
+router.post("/Glogin", body('email').isEmail(), async (req, res) => {
+    try {
+        let { userId, gtoken, email, name, isApproved, ipAddress } = (req.body)
         const error = validationResult(req)
-    if (!error.isEmpty()) {
-         return res.send("invalid email")
-    }
+        if (!error.isEmpty()) {
+            return res.send("invalid email")
+        }
         let user = await StudentProfileModel.findOne({ email: email });
         if (user == null) {
-            const user = await new StudentProfileModel({userId:userId, email:email, name:name, isApproved:isApproved , ipAddress:ipAddress})
-            const result = await user.save(user)            
-            
-var transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'bluenetwrk@gmail.com',
-      pass: 'vwzv axcq ywrw bxjd'
-    }
-  });
-  var mailOptions = {
-    from: 'bluenetwrk@gmail.com',
-    to: result.email,
-    subject: `Successfully Registered with Itwalkin`,
-    html: '<p>Welcome to Itwalkin Job Portal</p>'+'<p>click <a href="http://www.itwalkin.com">itwalkin</a> to explore more </p>'
-  };
-  
-  transporter.sendMail(mailOptions,  function(error, info){
-    if (error) {    
-    } else {    
-    }
-  });
-  let gtoken = jwt.sign({id:result._id},secretKey)
-            console.log("user email 144", gtoken)
-            res.send({status : "success" ,token : gtoken ,id: result._id})
+            const user = await new StudentProfileModel({ userId: userId, email: email, name: name, isApproved: isApproved, ipAddress: ipAddress })
+            const result = await user.save(user)
+
+            var transporter = nodemailer.createTransport({
+                service: 'gmail',
+                auth: {
+                    user: 'bluenetwrk@gmail.com',
+                    pass: 'vwzv axcq ywrw bxjd'
+                }
+            });
+            var mailOptions = {
+                from: 'bluenetwrk@gmail.com',
+                to: result.email,
+                subject: `Successfully Registered with Itwalkin`,
+                html: '<p>Welcome to Itwalkin Job Portal</p>' + '<p>click <a href="http://www.itwalkin.com">itwalkin</a> to explore more </p>'
+            };
+
+            transporter.sendMail(mailOptions, function (error, info) {
+                if (error) {
+                } else {
+                }
+            });
+            let gtoken = jwt.sign({ id: result._id }, secretKey)
+            res.send({ status: "success", token: gtoken, id: result._id })
         } else {
-  let gtoken = jwt.sign({id:user._id},secretKey)
-            res.send({status : "success" ,token : gtoken ,id: user._id})
-            // console.log("user email :", user)
+            let Nowtime = Date()  
+            let result = await StudentProfileModel.updateOne(
+                {_id: user._id},
+               {$set: {LogedInTime:Nowtime}}
+            )
+            let gtoken = jwt.sign({ id: user._id }, secretKey)
+            res.send({ status: "success", token: gtoken, id: user._id })
         }
 
     } catch (err) {
@@ -193,48 +199,49 @@ router.get("/getProfile/:id", verifyToken, async (req, res) => {
     try {
         let result = await StudentProfileModel.findOne({ _id: req.params.id })
         if (result) {
-            res.send({status:"success", result})
-        } 
-        
+            res.send({ status: "success", result })
+        }
+
     } catch (err) {
         res.send("back end error occured")
     }
 })
 
-// login for Admin...
+// login for Admin in search Params...
 
-router.post("/loginforAdmin", body('email').isEmail(), async(req, res)=>{
-    try{
-        let {email}=req.body
+router.post("/loginforAdmin", body('email').isEmail(), async (req, res) => {
+    try {
+        let { email } = req.body
         const error = validationResult(req)
         if (!error.isEmpty()) {
-             return res.send("invalid email")
+            return res.send("invalid email")
         }
-        let user = await StudentProfileModel.findOne({email:email})
-        if(user==null){
+        let user = await StudentProfileModel.findOne({ email: email })
+        if (user == null) {
             res.send("user not registered")
-        }else{
+        } else {
             // res.send(user)
             let token = jwt.sign({ id: user._id }, secretKey)
             res.send({ status: "success", id: user._id, token })
         }
-    }catch(err){
+    } catch (err) {
         res.send("back end error occured")
     }
 })
 
 // .....update full student profile...........
-router.put("/updatProfile/:id", verifyToken,  async (req, res) => {
+router.put("/updatProfile/:id", verifyToken, async (req, res) => {
     try {
 
         let result = await StudentProfileModel.updateOne(
-            {_id: req.params.id},
-           {$set:req.body
-         })
+            { _id: req.params.id },
+            {
+                $set: req.body
+            })
         if (result) {
             res.send("success")
-        } 
-        
+        }
+
     } catch (err) {
         res.send("back end error occured")
     }
@@ -242,11 +249,11 @@ router.put("/updatProfile/:id", verifyToken,  async (req, res) => {
 
 
 // ....get total number of Jobseekers for Admin and also for Emplyee search all condidiate..
-router.get("/getAllJobseekers", verifyToken, async(req, res)=>{
-    try{
-        let result= await StudentProfileModel.find()
+router.get("/getAllJobseekers", verifyToken, async (req, res) => {
+    try {
+        let result = await StudentProfileModel.find()
         res.send(result)
-    }catch(err){
+    } catch (err) {
         res.send("backend error occured")
     }
 })
@@ -274,118 +281,118 @@ router.get("/getAppliedProfileByIds/:id", async (req, res) => {
 
 
 // delete jobseeker Admin API
-router.delete("/deleteProfile/:id", async(req, res)=>{
-    try{
-        let result= await StudentProfileModel.deleteOne({_id:req.params.id})
-        if(result){
+router.delete("/deleteProfile/:id", async (req, res) => {
+    try {
+        let result = await StudentProfileModel.deleteOne({ _id: req.params.id })
+        if (result) {
             res.send("success")
         }
-    }catch(err){
+    } catch (err) {
         res.send("backend issue")
     }
 })
 // update for approval from admin
-router.put("/setApproval/:id", async(req, res)=>{
-    try{
-        let result= await StudentProfileModel.updateOne(
-            {_id:req.params.id},
-            {$set:req.body}
+router.put("/setApproval/:id", async (req, res) => {
+    try {
+        let result = await StudentProfileModel.updateOne(
+            { _id: req.params.id },
+            { $set: req.body }
         )
-        if(result){
+        if (result) {
             res.send("success")
         }
-    }catch(err){
+    } catch (err) {
         res.send("backend error occured")
     }
 })
 
 // update for Reject from admin
-router.put("/isReject/:id", async(req, res)=>{
-    try{
-        let result= await StudentProfileModel.updateOne(
-            {_id:req.params.id},
-            {$set:req.body}
+router.put("/isReject/:id", async (req, res) => {
+    try {
+        let result = await StudentProfileModel.updateOne(
+            { _id: req.params.id },
+            { $set: req.body }
         )
-        if(result){
+        if (result) {
             res.send("success")
         }
-    }catch(err){
+    } catch (err) {
         res.send("backend error occured")
     }
 })
 
 // isOnhold status from admin
 
-router.put("/isOnhold/:id", async(req, res)=>{
-    try{
-        let result= await StudentProfileModel.updateOne(
-            {_id:req.params.id},
-            {$set:req.body}
+router.put("/isOnhold/:id", async (req, res) => {
+    try {
+        let result = await StudentProfileModel.updateOne(
+            { _id: req.params.id },
+            { $set: req.body }
         )
-        if(result){
+        if (result) {
             res.send("success")
         }
-    }catch(err){
+    } catch (err) {
         res.send("backend error occured")
     }
 })
 
 // find all Approved Jobseekers for admin
-router.get("/getApprovedStu", async(req, res)=>{
-    try{
-        let result = await StudentProfileModel.aggregate([{$match : { isApproved : true }}])
+router.get("/getApprovedStu", async (req, res) => {
+    try {
+        let result = await StudentProfileModel.aggregate([{ $match: { isApproved: true } }])
 
-        if(result){
+        if (result) {
             res.send(result)
         }
-    }catch(err){
-    res.send("backend Error Occured")
+    } catch (err) {
+        res.send("backend Error Occured")
     }
 })
 
 // find all which are not Approved Jobseekers for admin
-router.get("/getNotApprovedStu", async(req, res)=>{
-    try{
-        let result = await StudentProfileModel.aggregate([{$match : { isApproved : false }}])
+router.get("/getNotApprovedStu", async (req, res) => {
+    try {
+        let result = await StudentProfileModel.aggregate([{ $match: { isApproved: false } }])
 
-        if(result){
+        if (result) {
             res.send(result)
         }
-    }catch(err){
-    res.send("backend Error Occured")
+    } catch (err) {
+        res.send("backend Error Occured")
     }
 })
 
 
-var start = new Date();  
-start.setUTCHours(0,0,0,0);
+var start = new Date();
+start.setUTCHours(0, 0, 0, 0);
 
 var end = new Date();
-end.setUTCHours(23,59,59,999);
+end.setUTCHours(23, 59, 59, 999);
 
-let startDay =start.toUTCString() 
-let endDay=end.toUTCString()
+let startDay = start.toUTCString()
+let endDay = end.toUTCString()
 
-router.get("/getTodayStuProfile", async(req, res)=>{ 
-    try{
-        let result = await StudentProfileModel.find({ createdAt: {$gte: startDay, $lte:endDay} })
-        if(result){
+router.get("/getTodayStuProfile", async (req, res) => {
+    try {
+        let result = await StudentProfileModel.find({ createdAt: { $gte: startDay, $lte: endDay } })
+        if (result) {
             res.send(result)
         }
-    }catch(err){
-    res.send("backend Error Occured")
+    } catch (err) {
+        res.send("backend Error Occured")
 
     }
 })
 
-router.get("/getNoticePeriod", async(req, res)=>{
-    try{
-        let result = await StudentProfileModel.find({ NoticePeriod: { $lte:"20 days"} })
-        if(result){
+router.get("/getNoticePeriod", async (req, res) => {
+    try {
+        let result = await StudentProfileModel.find({ NoticePeriod: { $lte: "20 days" } })
+        if (result) {
             res.send(result)
         }
-    }catch(err){
-    res.send("backend Error Occured")
+    } catch (err) {
+        res.send("backend Error Occured")
 
     }
 })
@@ -417,27 +424,29 @@ router.get("/getJobSeeker/:SearchKey", async (req, res) => {
 })
 // message sending from admin
 
-router.put("/sendMessage/:id", async(req, res)=>{
-    try{
+router.put("/sendMessage/:id", async (req, res) => {
+    try {
         let result = await StudentProfileModel.updateOne({
-            _id:req.params.id},
-            {$set : req.body
-        })
-        if(result){
+            _id: req.params.id
+        },
+            {
+                $set: req.body
+            })
+        if (result) {
             res.send("success")
-        }        
-    }catch(err){
+        }
+    } catch (err) {
         res.send("some error occured")
     }
 })
 
 //  find all email only of jobseekers
 
-router.get("/getAllemail", async(req, res)=>{
-    try{
-        let result= await StudentProfileModel.find({}, { email: 1, _id:0 })
-        res.send( result)
-    }catch(err){
+router.get("/getAllemail", async (req, res) => {
+    try {
+        let result = await StudentProfileModel.find({}, { email: 1, _id: 0 })
+        res.send(result)
+    } catch (err) {
         res.send("serror error")
 
     }

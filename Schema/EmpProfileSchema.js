@@ -56,7 +56,9 @@ type:String
     },
     isOnhold:{
         type:Boolean
-
+    },
+    LogedInTime:{
+        type:Date
     }
 
 },

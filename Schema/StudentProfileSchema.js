@@ -72,9 +72,10 @@ message:{
     },
     isOnhold:{
         type:Boolean
-
+    },
+    LogedInTime:{
+        type:Date
     }
-
 },
 {timestamps:true})
 
