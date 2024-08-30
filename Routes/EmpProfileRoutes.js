@@ -49,8 +49,8 @@ router.put("/uploadImage/:id",upload.single('image'), async (req, res)=>{
     try{
     let result= await EmpProfileModel.updateOne(
         {_id:req.params.id},
-        // {$set:{image: `https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/${imagePath}`}}       
-        {$set:{image: `http://localhost:8080/Images/${imagePath}`}}       
+        {$set:{image: `https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/${imagePath}`}}       
+        // {$set:{image: `http://localhost:8080/Images/${imagePath}`}}       
     )
     if(result){
     res.send(result)
@@ -64,8 +64,8 @@ router.put("/uploadImage/:id",upload.single('image'), async (req, res)=>{
 
 router.put("/deleteImage/:id", async (req, res) => {
     const comingImagepath=req.body.image
-    // const trimImagepath=comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/","")
-    const trimImagepath=comingImagepath.replace("http://localhost:8080/Images/","")
+    const trimImagepath=comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/","")
+    // const trimImagepath=comingImagepath.replace("http://localhost:8080/Images/","")
     const filepath=`public/Images/${trimImagepath}`
 
     try {
@@ -184,8 +184,6 @@ var transporter = nodemailer.createTransport({
                 {_id: user._id},
                {$set: {LogedInTime:Nowtime}}
             )
-            console.log(result)
-
             let gtoken = jwt.sign({id:user._id},secretKey)
             res.send({status : "success" ,token : gtoken ,id: user._id})
         }

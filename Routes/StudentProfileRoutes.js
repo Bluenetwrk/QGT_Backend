@@ -49,13 +49,11 @@ const upload = multer({ storage: storage });
 
 router.put("/uploadImage/:id", upload.single('image'), async (req, res) => {
     imagePath = req.file.filename
-    console.log("51 line", imagePath)
-
     try {
         let result = await StudentProfileModel.updateOne(
             { _id: req.params.id },
-            // { $set: { image: `https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/${imagePath}` } }
-            { $set: { image: `http://localhost:8080/Images/${imagePath}` } }
+            { $set: { image: `https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/${imagePath}` } }
+            // { $set: { image: `http://localhost:8080/Images/${imagePath}` } }
         )
         if (result) {
             res.send(result)
@@ -68,8 +66,8 @@ router.put("/uploadImage/:id", upload.single('image'), async (req, res) => {
 // delete image for studentProfile....
 router.put("/deleteImage/:id", async (req, res) => {
     const comingImagepath = req.body.image
-    // const trimImagepath = comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/", "")
-    const trimImagepath = comingImagepath.replace("http://localhost:8080/Images/", "")
+    const trimImagepath = comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/", "")
+    // const trimImagepath = comingImagepath.replace("http://localhost:8080/Images/", "")
     const filepath = `public/Images/${trimImagepath}`
     try {
         let result = await StudentProfileModel.updateOne(

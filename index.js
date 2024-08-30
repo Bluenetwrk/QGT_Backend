@@ -21,8 +21,6 @@ mongoose.connect("mongodb://127.0.0.1:27017/Job-Portal-Database")
 app.use(express.json())
 app.use(cors())
 app.use(express.static('public'))
-
-
 app.use("/StudentProfile",StudentProfileRoutes)
 app.use("/EmpProfile",EmpProfileRoutes)
 app.use("/jobpost", jobpostRoutes)
