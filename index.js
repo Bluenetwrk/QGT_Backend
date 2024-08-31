@@ -13,8 +13,8 @@ const mongoose = require("mongoose");
 //const port = process.env.PORT
 const port = 8080
 // mongoose.connect(process.env.MONGO_URL)
-// mongoose.connect("mongodb+srv://blueimpluse:jobportal1234@cluster0.5dgcnm4.mongodb.net/jobportalMern")
-mongoose.connect("mongodb://127.0.0.1:27017/Job-Portal-Database")
+mongoose.connect("mongodb+srv://blueimpluse:jobportal1234@cluster0.5dgcnm4.mongodb.net/jobportalMern")
+// mongoose.connect("mongodb://127.0.0.1:27017/Job-Portal-Database")
     .then((res) => { console.log("connected") })
     .catch(() => { console.log("failed") })
 
