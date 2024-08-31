@@ -355,6 +355,7 @@ router.get("/getNotApprovedEmp", verifyToken, async(req, res)=>{
     res.send("backend Error Occured")
     }
 })
+
 // find FIRM Company Type
 
 router.get("/getFirmOrganisation", verifyToken, async(req, res)=>{
@@ -442,7 +443,19 @@ router.get("/getAllemail", async(req, res)=>{
 })
 
 
-// find last login
+//  get RecentLogin Employee foradmin
+router.get("/RecentLogin",  async(req, res)=>{
+    console.log("gg")
+    try{
+        let result = await EmpProfileModel.aggregate([{$match : LogedInTime}])
+        console.log(result)
+        if(result){
+            res.send(result)
+        }
+    }catch(err){
+    res.send("backend Error Occured")
+    }
+})
 
 
 
