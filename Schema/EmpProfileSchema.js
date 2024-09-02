@@ -59,8 +59,10 @@ type:String
     },
     LogedInTime:{
         type:Date
+    },
+    online:{
+        type:Boolean
     }
-
 },
 {timestamps:true}
 )

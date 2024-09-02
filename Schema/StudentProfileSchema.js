@@ -75,6 +75,9 @@ message:{
     },
     LogedInTime:{
         type:Date
+    },
+    online:{
+        type:Boolean
     }
 },
 {timestamps:true})

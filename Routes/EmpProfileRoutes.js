@@ -1,4 +1,5 @@
 const express = require("express");
+const app = express();
 const router = express.Router();
 const EmpProfileModel= require("../Schema/EmpProfileSchema")
 const bcrypt = require("bcrypt")
@@ -10,7 +11,6 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 var nodemailer = require('nodemailer');
 const fs = require('fs')
-
 
 function verifyToken(req, res, next){
     if(req.headers['authorization']){
@@ -49,8 +49,10 @@ router.put("/uploadImage/:id",upload.single('image'), async (req, res)=>{
     try{
     let result= await EmpProfileModel.updateOne(
         {_id:req.params.id},
-        {$set:{image: `https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/${imagePath}`}}       
+        // {$set:{image: `https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/${imagePath}`}}       
         // {$set:{image: `http://localhost:8080/Images/${imagePath}`}}       
+        {$set:{image: `https://itwalkin-backend-testrelease-2-0-1-0824-ns0g.onrender.com/Images/${imagePath}`}} 
+                   
     )
     if(result){
     res.send(result)
@@ -64,8 +66,9 @@ router.put("/uploadImage/:id",upload.single('image'), async (req, res)=>{
 
 router.put("/deleteImage/:id", async (req, res) => {
     const comingImagepath=req.body.image
-    const trimImagepath=comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/","")
+    // const trimImagepath=comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/","")
     // const trimImagepath=comingImagepath.replace("http://localhost:8080/Images/","")
+    const trimImagepath=comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824-ns0g.onrender.com/Images/","")
     const filepath=`public/Images/${trimImagepath}`
 
     try {
@@ -442,21 +445,38 @@ router.get("/getAllemail", async(req, res)=>{
     }
 })
 
+//  get RecentLogin Employee foradmin
+let today = new Date();
+Date.prototype.subtractDays = function (d) {
+    this.setTime(this.getTime() 
+        - (d * 24 * 60 * 60 * 1000));
+    return this;
+    }
+let a = new Date();
+a.subtractDays(100);
+router.get("/RecentLogin",  async(req, res)=>{
+    try{
+        let result = await EmpProfileModel.find({ LogedInTime: {$gte:a , $lte:today} })
+        if(result){
+            res.send(result)
+        }
+    }catch(err){
+    res.send("backend Error Occured")
+    }
+})
 
-// //  get RecentLogin Employee foradmin
-// router.get("/RecentLogin",  async(req, res)=>{
-//     console.log("gg")
-//     try{
-//         let result = await EmpProfileModel.aggregate([{$match : LogedInTime}])
-//         console.log(result)
-//         if(result){
-//             res.send(result)
-//         }
-//     }catch(err){
-//     res.send("backend Error Occured")
-//     }
-// })
-
+// find all Online for admin
+router.get("/checkOnline", verifyToken, async (req, res) => {
+    try {
+        // let result = await StudentProfileModel.aggregate([{ $match: { isApproved: false } }])
+        let result = await EmpProfileModel.aggregate([{$match:{online:true}}])
+        if (result) {
+            res.send(result)
+        }
+    } catch (err) {
+        res.send("backend Error Occured")
+    }
+})
 
 
 // ................................Login with password.........................

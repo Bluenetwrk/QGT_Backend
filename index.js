@@ -7,6 +7,9 @@ const EmpProfileRoutes = require("./Routes/EmpProfileRoutes");
 const jobpostRoutes = require("./Routes/JobpostsRoutes");
 const adminRoutes =require("./Routes/AdminRout")
 const PaymentRoute = require("./Routes/PaymentRout")
+const StudentProfileModel = require("./Schema/StudentProfileSchema")
+const EmployeeProfileModel = require("./Schema/EmpProfileSchema")
+
 //require("dotenv").config
 const { MongoClient } = require("mongodb")
 const mongoose = require("mongoose");
@@ -27,12 +30,40 @@ app.use("/jobpost", jobpostRoutes)
 app.use("/admin", adminRoutes)
 app.use("/paymentAPI", PaymentRoute)
 
+app.use("/", (req, res)=>{
+    res.send("welcome to It-Walkin Backend")
+})
 app.use("*", (req, res) => {
     res.send(" Itwalkin could not fetch this API")
 })
 
+const http = require("http")
+const Server=require('socket.io').Server
+const server = http.createServer(app)
 
 
-app.listen(port, () => {
+const io= new Server(server,{
+    cors:{
+        origin:"*"
+    }
+})
+// const uns=io.of('/student-namespace')
+
+io.on('connection',  async(socket)=>{
+    let token = socket.handshake.auth.token    
+    let result =await EmployeeProfileModel.findByIdAndUpdate({_id:token},{$set:{online:true}})
+    if(result===null){
+    let result =await StudentProfileModel.findByIdAndUpdate({_id:token},{$set:{online:true}})
+    }
+    socket.on("disconnect", async ()=>{        
+        let token = socket.handshake.auth.token
+        let result =await StudentProfileModel.findByIdAndUpdate({_id:token},{$set:{online:false}})
+        if(result===null){
+            let result =await EmployeeProfileModel.findByIdAndUpdate({_id:token},{$set:{online:false}})
+            }
+    })
+})
+
+server.listen(port, () => {
     console.log(`app running on port ${port} for booking`)
 })
