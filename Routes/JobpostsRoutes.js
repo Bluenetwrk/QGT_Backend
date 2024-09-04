@@ -335,4 +335,24 @@ router.post("/getBothjobFilter/:id", async(req, res)=>{
     }
 })
 
+//  pagination , get Limited jobs (never used API)
+router.get("/getLimitJobs/:limit", async(req, res)=>{
+    let limitValue = (parseInt(req.params.limit))
+    try{
+       let result = await JobpostsModel.aggregate([{$limit:limitValue}])
+       res.send(result)
+    }catch(err){
+        res.send("server error")
+    }
+})
+
+router.get("/getTagsJobs/:name", async(req, res)=>{
+    try{
+        let result = await JobpostsModel.aggregate([{$match:{Tags:req.params.name}}])
+        res.send(result)
+    }catch(err){
+        res.send("server error")
+    }
+})
+
 module.exports = router

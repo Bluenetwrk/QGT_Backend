@@ -30,11 +30,16 @@ app.use("/jobpost", jobpostRoutes)
 app.use("/admin", adminRoutes)
 app.use("/paymentAPI", PaymentRoute)
 
-app.use("/", (req, res)=>{
-    res.send("welcome to It-Walkin Backend")
-})
-app.use("*", (req, res) => {
-    res.send(" Itwalkin could not fetch this API")
+// app.use("/", (req, res)=>{
+//     try{
+//     res.send("It-walkin server is up and running")
+// }catch(err){
+//     res.send(" Itwalkin server is down")
+// }
+// })
+
+app.use("*", (req, res) => {    
+        res.send(" Itwalkin could not fetch this API")    
 })
 
 const http = require("http")
