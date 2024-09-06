@@ -8,6 +8,9 @@ const AdminSchema = new mongoose.Schema({
     },
     password:{
         type:String
+    },
+    isSuperAdmin:{
+        type:Boolean
     }
 })
 const  AdminModel = mongoose.model("Admin",AdminSchema )

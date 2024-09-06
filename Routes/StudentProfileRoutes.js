@@ -246,10 +246,19 @@ router.put("/updatProfile/:id", verifyToken, async (req, res) => {
         res.send("back end error occured")
     }
 })
+// authentic for logout jobseeker
+function CheckComp(req, res, next){
+    let valid=req.headers['authorization']
+    if(valid==='BlueItImpulseWalkinIn'){
+        next()
+}else{
+    res.send("Unauthorised Access")
+}
+}
 
 
 // ....get total number of Jobseekers for Admin and also for Emplyee search all condidiate..
-router.get("/getAllJobseekers", verifyToken, async (req, res) => {
+router.get("/getAllJobseekers", CheckComp, async (req, res) => {
     try {
         let result = await StudentProfileModel.find()
         res.send(result)
@@ -483,6 +492,14 @@ router.get("/checkOnline", verifyToken, async (req, res) => {
     }
 })
 
+router.get("/getSkillTags/:name", async(req, res)=>{
+    try{
+        let result = await StudentProfileModel.aggregate([{$match:{Tags:req.params.name}}])
+        res.send(result)
+    }catch(err){
+        res.send("server error")
+    }
+})
 
 
 

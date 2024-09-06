@@ -78,7 +78,10 @@ message:{
     },
     online:{
         type:Boolean
-    }
+    },
+    Tags:[
+        
+    ]
 },
 {timestamps:true})
 

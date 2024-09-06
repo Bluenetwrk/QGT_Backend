@@ -29,10 +29,11 @@ function verifyToken(req, res, next){
 
 router.post("/adminRegister", async (req, res) => {
     let { email, password } = req.body
+    let isSuperAdmin=false
     try {
         // let salt = bcrypt.genSalt(10)
         let hashedPassword = bcrypt.hashSync(password, 10)
-        let user = await AdminModel({ email: email, password: hashedPassword })
+        let user = await AdminModel({ email: email, password: hashedPassword, isSuperAdmin: isSuperAdmin })
         let result = user.save()
         if (result) {
             res.send("success")
@@ -57,8 +58,13 @@ router.post("/adminLogin", async (req, res) => {
             let hashedPassword = user.password
             let result = bcrypt.compareSync(password, hashedPassword)
             if(result==true){
+                let isSuperAdmin=true
+                let result = await AdminModel.updateOne(
+                    {_id: user._id},
+                   {$set: {isSuperAdmin:isSuperAdmin}}
+                )
                 let token = jwt.sign({id:user._id},secretKey)
-                res.send({status:"success", token, id: user._id})
+                res.send({auth:user.isSuperAdmin, token, id: user._id})
 
             }else{
                 res.send("incorrect password")
