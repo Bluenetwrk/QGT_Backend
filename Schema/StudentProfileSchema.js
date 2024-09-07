@@ -10,6 +10,9 @@ const profileSchema= new mongoose.Schema({
     name:{
         type:String
     },
+    city:{
+        type:String
+    },
     email: {
         type: String,
         unique: true

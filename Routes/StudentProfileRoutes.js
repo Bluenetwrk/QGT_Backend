@@ -501,7 +501,19 @@ router.get("/getSkillTags/:name", async(req, res)=>{
     }
 })
 
-
+// get  Job Seeker jobLocation  
+router.get("/getStuLocation/:locationName", async(req, res)=>{
+    console.log(req.params.locationName)
+    try{
+        let result = await StudentProfileModel.aggregate([{$match:{city:req.params.locationName}}])
+        console.log("location",result)
+        if(result){
+            res.send(result)
+        }
+    }catch(err){
+        res.send("backend error ")
+    }
+})
 
 
 

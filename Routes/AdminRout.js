@@ -58,21 +58,30 @@ router.post("/adminLogin", async (req, res) => {
             let hashedPassword = user.password
             let result = bcrypt.compareSync(password, hashedPassword)
             if(result==true){
-                let isSuperAdmin=true
-                let result = await AdminModel.updateOne(
-                    {_id: user._id},
-                   {$set: {isSuperAdmin:isSuperAdmin}}
-                )
+                // let isSuperAdmin=true
+                // let result = await AdminModel.updateOne(
+                //     {_id: user._id},
+                //    {$set: {isSuperAdmin:isSuperAdmin}}
+                // )
                 let token = jwt.sign({id:user._id},secretKey)
                 res.send({auth:user.isSuperAdmin, token, id: user._id})
 
             }else{
                 res.send("incorrect password")
-            }
-            
+            }            
         }
     } catch (err) {
         res.send("backend error occred")
+    }
+})
+
+// Get All Admins for SuperAdmin
+router.get("/getAllAdmin", async(req, res)=>{
+    try{
+        let result = await AdminModel.find()
+        res.send(result)
+    }catch(err){
+        res.send("backend error occured")
     }
 })
 
