@@ -305,7 +305,6 @@ router.get("/getjobTitle/:id", async(req, res)=>{
 
 // get  getjobLocation  form 
 router.get("/getjobLocation/:id", async(req, res)=>{
-    // console.log(req.params.id)
     try{
         let result = await JobpostsModel.find({"$or":[{jobLocation:{$regex:req.params.id}}]})
         if(result){

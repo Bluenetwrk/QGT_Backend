@@ -6,7 +6,7 @@ const { body, validationResult } = require("express-validator")
 const jwt = require("jsonwebtoken")
 const secretKey = "abcde";
 var nodemailer = require('nodemailer');
-const importverifyToken = require('./JobpostsRoutes')
+// const importverifyToken = require('./JobpostsRoutes')
 const fs = require('fs')
 
 // Middleware
@@ -493,9 +493,11 @@ router.get("/checkOnline", verifyToken, async (req, res) => {
 })
 
 router.get("/getSkillTags/:name", async(req, res)=>{
-    try{
-        let result = await StudentProfileModel.aggregate([{$match:{Tags:req.params.name}}])
-        res.send(result)
+
+try{
+    let result = await StudentProfileModel.find({Tags: {$elemMatch: {value: req.params.name,label: req.params.name }}
+    })
+       res.send(result)
     }catch(err){
         res.send("server error")
     }
@@ -503,10 +505,8 @@ router.get("/getSkillTags/:name", async(req, res)=>{
 
 // get  Job Seeker jobLocation  
 router.get("/getStuLocation/:locationName", async(req, res)=>{
-    console.log(req.params.locationName)
     try{
         let result = await StudentProfileModel.aggregate([{$match:{city:req.params.locationName}}])
-        console.log("location",result)
         if(result){
             res.send(result)
         }
