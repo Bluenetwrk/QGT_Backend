@@ -19,7 +19,7 @@ const port = 8080
 mongoose.connect("mongodb+srv://blueimpluse:jobportal1234@cluster0.5dgcnm4.mongodb.net/jobportalMern")
 // mongoose.connect("mongodb://127.0.0.1:27017/Job-Portal-Database")
     .then((res) => { console.log("connected") })
-    .catch(() => { console.log("failed") })
+    .catch((err) => { console.log("failed") })
 
 app.use(express.json())
 app.use(cors())
@@ -42,7 +42,7 @@ app.use("*", (req, res) => {
         res.send(" Itwalkin could not fetch this API")    
 })
 
-const http = require("http")
+const http = require("https")
 const Server=require('socket.io').Server
 const server = http.createServer(app)
 
