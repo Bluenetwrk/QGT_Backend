@@ -42,7 +42,7 @@ app.use("*", (req, res) => {
         res.send(" Itwalkin could not fetch this API")    
 })
 
-const http = require("https")
+const http = require("http")
 const Server=require('socket.io').Server
 const server = http.createServer(app)
 
