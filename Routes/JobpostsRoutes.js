@@ -166,7 +166,6 @@ router.get("/searchJob/:key", async(req,res)=>{
 // ..........update for job applyjobs for job seeker..................
 router.put("/updatforJobApply/:id", verifyToken, async (req, res) => {
     let userId  = req.body.jobSeekerId
-
     try {
         let result = await JobpostsModel.updateOne(
            { _id: req.params.id},
@@ -196,7 +195,7 @@ router.put("/updatforJobApply/:id", verifyToken, async (req, res) => {
               
               transporter.sendMail(mailOptions, function(error, info){
                 if (error) {
-                  console.log(error);
+                  console.log("mail not sent",error);
                 //   res.send("could not send the mail")
                 } else {
                 //   console.log('Email sent: ' + info.response);
@@ -347,7 +346,9 @@ router.get("/getLimitJobs/:limit", async(req, res)=>{
 
 router.get("/getTagsJobs/:name", async(req, res)=>{
     try{
-        let result = await JobpostsModel.aggregate([{$match:{Tags:req.params.name}}])
+        // let result = await JobpostsModel.aggregate([{$match:{Tags:req.params.name}}])
+    let result = await JobpostsModel.find({Tags: {$elemMatch: {value: req.params.name,label: req.params.name }}})
+
         res.send(result)
     }catch(err){
         res.send("server error")
