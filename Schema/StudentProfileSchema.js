@@ -4,6 +4,9 @@ const profileSchema= new mongoose.Schema({
     image : {
         type:String
     },
+    Gpicture : {
+        type:String
+    },
     userId: {
         type: String
     },

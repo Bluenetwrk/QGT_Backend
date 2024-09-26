@@ -149,14 +149,14 @@ router.post("/verifyOtp", async (req, res) => {
 // .....initial login.............................
 router.post("/Glogin", body('email').isEmail(), async (req, res) => {
     try {
-        let { userId, gtoken, email, name, isApproved, ipAddress } = (req.body)
+        let { userId, gtoken, email, name, isApproved, ipAddress, Gpicture } = (req.body)
         const error = validationResult(req)
         if (!error.isEmpty()) {
             return res.send("invalid email")
         }
         let user = await StudentProfileModel.findOne({ email: email });
         if (user == null) {
-            const user = await new StudentProfileModel({ userId: userId, email: email, name: name, isApproved: isApproved, ipAddress: ipAddress })
+            const user = await new StudentProfileModel({ userId: userId, email: email, Gpicture:Gpicture, name: name, isApproved: isApproved, ipAddress: ipAddress })
             const result = await user.save(user)
 
             var transporter = nodemailer.createTransport({
