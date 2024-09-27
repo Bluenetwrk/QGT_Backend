@@ -4,7 +4,7 @@ const profileSchema= new mongoose.Schema({
     image : {
         type:String
     },
-    Gpicture : {
+    Gpicture : { 
         type:String
     },
     userId: {
