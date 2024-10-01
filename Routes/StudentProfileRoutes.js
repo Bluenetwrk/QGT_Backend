@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const StudentProfileModel = require("../Schema/StudentProfileSchema")
+const JobSeekerArchive = require("../Schema/JobSeekerArchive")
 const bcrypt = require("bcrypt")
 const { body, validationResult } = require("express-validator")
 const jwt = require("jsonwebtoken")
@@ -515,6 +516,25 @@ router.get("/getStuLocation/:locationName", async(req, res)=>{
     }
 })
 
+// ....delete JobSeeker Profile ....
+router.delete("/deleteJobSeeker/:id", async (req, res) => {
+    const Archived = await StudentProfileModel.findByIdAndDelete({ _id: req.params.id })
+    const user = await new JobSeekerArchive({Archived:Archived})
+    console.log("user", user)
+        const resu = await user.save(user)
+    console.log("result", resu)
+        // res.send(result)
+    
+})
+router.get("/getAllArchivedJobseekers",  async (req, res) => {
+    try {
+        let result = await JobSeekerArchive.find({}, { Archived: 1, _id: 0 })
+        console.log(result)
+        res.send(result)
+    } catch (err) {
+        res.send("backend error occured")
+    }
+})
 
 
 
