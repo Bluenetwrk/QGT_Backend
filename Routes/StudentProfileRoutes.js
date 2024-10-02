@@ -195,7 +195,7 @@ router.post("/Glogin", body('email').isEmail(), async (req, res) => {
         res.send("backend error")
     }
 })
-// .........get userprofile to show in my profile and for update..........
+// .........get userprofile to show in my profile and for update , my profile, admin check profile..........
 router.get("/getProfile/:id", verifyToken, async (req, res) => {
     try {
         let result = await StudentProfileModel.findOne({ _id: req.params.id })
@@ -520,22 +520,34 @@ router.get("/getStuLocation/:locationName", async(req, res)=>{
 router.delete("/deleteJobSeeker/:id", async (req, res) => {
     const Archived = await StudentProfileModel.findByIdAndDelete({ _id: req.params.id })
     const user = await new JobSeekerArchive({Archived:Archived})
-    console.log("user", user)
         const resu = await user.save(user)
-    console.log("result", resu)
-        // res.send(result)
+        res.send(resu)
     
 })
-router.get("/getAllArchivedJobseekers",  async (req, res) => {
+// archived Job seeker for admin
+router.get("/getAllArchivedJobseekers", CheckComp,  async (req, res) => {
     try {
         let result = await JobSeekerArchive.find({}, { Archived: 1, _id: 0 })
-        console.log(result)
+
         res.send(result)
     } catch (err) {
         res.send("backend error occured")
     }
 })
 
+// check archived full profile for admin
+
+router.get("/getArchivedProfile/:id", verifyToken, async (req, res) => {
+    try {
+        let result = await JobSeekerArchive.find({}, { Archived: 1, _id: 0 })
+        if (result) {
+            res.send( result )
+        }
+
+    } catch (err) {
+        res.send("back end error occured")
+    }
+})
 
 
 module.exports = router
