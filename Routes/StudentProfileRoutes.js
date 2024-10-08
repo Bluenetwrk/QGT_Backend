@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const StudentProfileModel = require("../Schema/StudentProfileSchema")
-const JobSeekerArchive = require("../Schema/JobSeekerArchive")
+const DeletedJobSeeker = require("../Schema/deletedJobSeeker")
 const bcrypt = require("bcrypt")
 const { body, validationResult } = require("express-validator")
 const jwt = require("jsonwebtoken")
@@ -270,7 +270,6 @@ router.get("/getAllJobseekers", CheckComp, async (req, res) => {
 //  getting student-profile with applied user id for Employee......
 router.get("/getAppliedProfileByIds/:id", async (req, res) => {
     let comingArray = req.params.id
-
     let spliArray = comingArray.split(",")
 
     try {
@@ -518,17 +517,19 @@ router.get("/getStuLocation/:locationName", async(req, res)=>{
 
 // ....delete JobSeeker Profile ....
 router.delete("/deleteJobSeeker/:id", async (req, res) => {
+    try{
     const Archived = await StudentProfileModel.findByIdAndDelete({ _id: req.params.id })
-    const user = await new JobSeekerArchive({Archived:Archived})
-        const resu = await user.save(user)
-        res.send(resu)
-    
+    const user = await new DeletedJobSeeker({Archived:Archived})
+        const resu = await user.save()
+        res.send("success")
+    }catch(err){
+        res.send("error")
+    }
 })
 // archived Job seeker for admin
 router.get("/getAllArchivedJobseekers", CheckComp,  async (req, res) => {
     try {
-        let result = await JobSeekerArchive.find({}, { Archived: 1, _id: 0 })
-
+        let result = await DeletedJobSeeker.find({}, { Archived: 1, _id: 0 })
         res.send(result)
     } catch (err) {
         res.send("backend error occured")
@@ -539,7 +540,7 @@ router.get("/getAllArchivedJobseekers", CheckComp,  async (req, res) => {
 
 router.get("/getArchivedProfile/:id", verifyToken, async (req, res) => {
     try {
-        let result = await JobSeekerArchive.find({}, { Archived: 1, _id: 0 })
+        let result = await DeletedJobSeeker.find({}, { Archived: 1, _id: 0 })
         if (result) {
             res.send( result )
         }

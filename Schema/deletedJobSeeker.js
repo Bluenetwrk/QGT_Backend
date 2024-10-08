@@ -1,6 +1,6 @@
 const mongoose = require("mongoose")
 
-const profileSchema= new mongoose.Schema(
+const DeletedJobSeeker= new mongoose.Schema(
     {
         Archived:{
     type:Object
@@ -9,6 +9,6 @@ const profileSchema= new mongoose.Schema(
 {timestamps:true}
 )
 
-const profileModel= mongoose.model("JobSeeker-Archive",profileSchema)
+const profileModel= mongoose.model("Deleted-JobSeeker",DeletedJobSeeker)
 
 module.exports=profileModel

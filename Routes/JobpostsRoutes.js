@@ -87,15 +87,7 @@ router.get("/getjobs/:id",verifyHomeJobs, async (req, res) => {
         res.status(401).send("server issue")
     }
 })
-// ................get jobs for myappliedjobs for jobseeker.......
-router.get("/getMyAppliedjobs/:id", verifyToken, async (req, res) => {
-    try {
-        let jobs = await JobpostsModel.find({jobSeekerId: req.params.id })
-        res.send(jobs)
-    } catch (err) {
-        res.status(401).send("server issue")
-    }
-})
+
 // ................get my posted jobs for emplyee.......
 router.get("/getPostedjobs/:id", verifyToken, async (req, res) => {
     try {
@@ -169,7 +161,7 @@ router.put("/updatforJobApply/:id", verifyToken, async (req, res) => {
     try {
         let result = await JobpostsModel.updateOne(
            { _id: req.params.id},
-           {$push: req.body}
+           {$push: {jobSeekerId:req.body}}
          )
          let job = await JobpostsModel.findOne({_id:req.params.id})
          let JobTile = job.jobTitle
@@ -196,26 +188,34 @@ router.put("/updatforJobApply/:id", verifyToken, async (req, res) => {
               transporter.sendMail(mailOptions, function(error, info){
                 if (error) {
                   console.log("mail not sent",error);
-                //   res.send("could not send the mail")
                 } else {
-                //   console.log('Email sent: ' + info.response);
                   res.send(" mail sent succesfully")
 
                 }
               });
-            //   res.send(result)
         }
         }    
+                //   res.send(" mail sent succesfully")
 
     } catch (err) {
         res.send("back end error occured")
     }
 })
+// ................get jobs for myappliedjobs for jobseeker.......
+router.get("/getMyAppliedjobs/:id", verifyToken, async (req, res) => {
+    try {
+        // let jobs = await JobpostsModel.find({jobSeekerId: req.params.id })
+    let jobs = await JobpostsModel.find({jobSeekerId: {$elemMatch: {jobSeekerId: req.params.id }}})
 
+        res.send(jobs)
+    } catch (err) {
+        res.status(401).send("server issue")
+    }
+})
 
 // .......upate for undoJobApply.............
 
-router.put("/updatforUndoJobApplied/:id",verifyToken, async (req, res) => {
+router.put("/updatforUndoJobApplied/:id", async (req, res) => {
     try {
         let result = await JobpostsModel.updateOne(           
             {_id: req.params.id}, 
@@ -228,7 +228,7 @@ router.put("/updatforUndoJobApplied/:id",verifyToken, async (req, res) => {
         res.send("back end error occured")
     }
 })
-//  get user id's for who has applied for job
+//  get user id's for who has applied for job from a single job
 router.get("/getAppliedUserIds/:id", async(req,res)=>{
     try{
         let JobIds= await JobpostsModel.findOne({_id:req.params.id})
@@ -354,5 +354,17 @@ router.get("/getTagsJobs/:name", async(req, res)=>{
         res.send("server error")
     }
 })
+// delete CheckBox Jobs for admin
+router.delete("/deleteCheckBoxArray", async(req, res)=>{
+    let comingIds =[
+        "67052463614661c5aedf260f",
+        "670523f2614661c5aedf260d"
+    ]
+    try{
+        let result=await JobpostsModel.deleteMany({_id:{$in:comingIds}})
+    }catch(err){
+        console.log(err)
+    }
+} )
 
 module.exports = router

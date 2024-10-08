@@ -36,6 +36,7 @@ salaryRange:{
     type : String
 },
 Tags:[
+    
 ],
 jobLocation:{
     type : String
@@ -50,7 +51,18 @@ skills:{
     type : String
 } ,
 jobSeekerId:[
-]  ,
+    {
+        jobSeekerId:{
+    type : String
+        },
+        date:{
+        type: Date
+    }
+    },
+    {
+}
+    
+ ] ,
 slectedJobseker:[
 ],
 rejectedJobseker:[
