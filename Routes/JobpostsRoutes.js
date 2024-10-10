@@ -3,6 +3,7 @@ const router = express.Router()
 const JobpostsModel = require("../Schema/PostJobSchema")
 const JobAppliedModel = require("../Schema/JobAppliedSchema")
 const StudentProfileModel= require("../Schema/StudentProfileSchema")
+const DeletedJobs= require("../Schema/deletedJobs")
 var nodemailer = require('nodemailer');
 
 const { MongoClient } = require("mongodb")
@@ -355,16 +356,31 @@ router.get("/getTagsJobs/:name", async(req, res)=>{
     }
 })
 // delete CheckBox Jobs for admin
-router.delete("/deleteCheckBoxArray", async(req, res)=>{
-    let comingIds =[
-        "67052463614661c5aedf260f",
-        "670523f2614661c5aedf260d"
-    ]
-    try{
-        let result=await JobpostsModel.deleteMany({_id:{$in:comingIds}})
+router.delete("/deleteCheckBoxArray/:ids", async(req, res)=>{
+    let comingIds = req.params.ids.split(",")
+    try{        
+        let foundJobs=await JobpostsModel.find({_id:{$in:comingIds}})
+        let deletedJobs=await JobpostsModel.deleteMany({_id:{$in:comingIds}})
+        if(deletedJobs.acknowledged===true){
+            const result=await new DeletedJobs({Archived:foundJobs})
+           let response=  await result.save()
+    }
+res.send("success")
     }catch(err){
-        console.log(err)
+res.send("fail")
+
     }
 } )
+
+router.get("/getArchiveJobs", async(req, res)=>{
+    try{
+        let result =await DeletedJobs.find({}, { Archived: 1, _id: 0})
+        console.log(result)
+        res.send(result)
+    }catch(err){
+        console.log("error")
+        res.send("error")
+    }
+})
 
 module.exports = router
