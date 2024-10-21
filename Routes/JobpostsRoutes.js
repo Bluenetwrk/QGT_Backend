@@ -66,8 +66,10 @@ router.get("/getHomejobs", verifyHomeJobs, async (req, res) => {
 // employee job postings
 router.post("/jobpost", verifyToken, async (req, res) => {
     try {
-        const {Logo, empId, companyName, jobTitle, jobDescription, jobtype, salaryRange, jobLocation, qualification, experiance, skills } = (req.body)
-        if ( !jobDescription || !companyName || !experiance || !jobLocation || !skills) {
+        console.log(req.body)
+        const {Logo, empId, companyName, jobTitle, jobDescription, jobtype, 
+            salaryRange, jobLocation, qualification, experiance, skills } = (req.body)
+        if ( !jobDescription || !companyName || !experiance || !jobLocation) {
             res.send("field are missing")
         } else {
             let jobs = new JobpostsModel(req.body)
@@ -75,6 +77,7 @@ router.post("/jobpost", verifyToken, async (req, res) => {
             res.send("success")
         }
     } catch (error) {
+        // console.log(error.message)
         res.send("server issue ")
     }
 })
@@ -358,12 +361,18 @@ router.get("/getTagsJobs/:name", async(req, res)=>{
 // delete CheckBox Jobs for admin
 router.delete("/deleteCheckBoxArray/:ids", async(req, res)=>{
     let comingIds = req.params.ids.split(",")
+    console.log("comingIds", comingIds)
     try{        
         let foundJobs=await JobpostsModel.find({_id:{$in:comingIds}})
         let deletedJobs=await JobpostsModel.deleteMany({_id:{$in:comingIds}})
+    console.log("deletedJobs", deletedJobs)
+
         if(deletedJobs.acknowledged===true){
             const result=await new DeletedJobs({Archived:foundJobs})
            let response=  await result.save()
+        // let result = await DeletedJobs.updateMany({$push:{Archived:foundJobs}})
+        // let result = await DeletedJobs.insertManyMany()
+        console.log(result)
     }
 res.send("success")
     }catch(err){
