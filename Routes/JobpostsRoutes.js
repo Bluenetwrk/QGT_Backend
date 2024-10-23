@@ -3,7 +3,8 @@ const router = express.Router()
 const JobpostsModel = require("../Schema/PostJobSchema")
 const JobAppliedModel = require("../Schema/JobAppliedSchema")
 const StudentProfileModel= require("../Schema/StudentProfileSchema")
-const DeletedJobs= require("../Schema/deletedJobs")
+const Archived= require("../Schema/ArchiveAchema")
+const Deleted= require("../Schema/DeletedJobsSchema")
 var nodemailer = require('nodemailer');
 
 const { MongoClient } = require("mongodb")
@@ -66,7 +67,6 @@ router.get("/getHomejobs", verifyHomeJobs, async (req, res) => {
 // employee job postings
 router.post("/jobpost", verifyToken, async (req, res) => {
     try {
-        console.log(req.body)
         const {Logo, empId, companyName, jobTitle, jobDescription, jobtype, 
             salaryRange, jobLocation, qualification, experiance, skills } = (req.body)
         if ( !jobDescription || !companyName || !experiance || !jobLocation) {
@@ -358,32 +358,66 @@ router.get("/getTagsJobs/:name", async(req, res)=>{
         res.send("server error")
     }
 })
-// delete CheckBox Jobs for admin
-router.delete("/deleteCheckBoxArray/:ids", async(req, res)=>{
+// Archive CheckBox Jobs for admin
+router.delete("/ArchiveCheckBoxArray/:ids", verifyToken, async(req, res)=>{
     let comingIds = req.params.ids.split(",")
     console.log("comingIds", comingIds)
     try{        
-        let foundJobs=await JobpostsModel.find({_id:{$in:comingIds}})
-        let deletedJobs=await JobpostsModel.deleteMany({_id:{$in:comingIds}})
-    console.log("deletedJobs", deletedJobs)
 
-        if(deletedJobs.acknowledged===true){
-            const result=await new DeletedJobs({Archived:foundJobs})
-           let response=  await result.save()
-        // let result = await DeletedJobs.updateMany({$push:{Archived:foundJobs}})
-        // let result = await DeletedJobs.insertManyMany()
-        console.log(result)
-    }
+        let foundJobs=await JobpostsModel.find({_id:{$in:comingIds}})
+
+        if (foundJobs.length > 0) {
+            let archiveJobs=foundJobs.map((jobs)=>{
+                return(
+                    jobs
+                )
+            })
+           let insertedValue= await Archived.insertMany({Archived:archiveJobs});
+        let deletedJobs=await JobpostsModel.deleteMany({_id:{$in:comingIds}})
+        console.log(deletedJobs)
+        }
 res.send("success")
     }catch(err){
 res.send("fail")
-
     }
-} )
+})
 
 router.get("/getArchiveJobs", async(req, res)=>{
     try{
-        let result =await DeletedJobs.find({}, { Archived: 1, _id: 0})
+        let result =await Archived.find({}, { Archived: 1, createdAt: 1})
+        console.log(result)
+        res.send(result)
+    }catch(err){
+        console.log("error")
+        res.send("error")
+    }
+})
+// delete CheckBox Jobs for admin
+router.delete("/deleteCheckBoxArray/:ids", verifyToken, async(req, res)=>{
+    let comingIds = req.params.ids.split(",")
+    console.log("comingIds", comingIds)
+    try{        
+
+        let foundJobs=await JobpostsModel.find({_id:{$in:comingIds}})
+        if (foundJobs.length > 0) {
+            let archiveJobs=foundJobs.map((jobs)=>{
+                return(
+                    jobs
+                )
+            })
+           let insertedValue= await Deleted.insertMany({Archived:archiveJobs});
+        let deletedJobs=await JobpostsModel.deleteMany({_id:{$in:comingIds}})
+        console.log(deletedJobs)
+        }
+res.send("success")
+    }catch(err){
+res.send("fail")
+    }
+})
+
+router.get("/getDeletedJobs", async(req, res)=>{
+    try{
+        let result =await Deleted.find({}, { Archived: 1, createdAt: 1})
         console.log(result)
         res.send(result)
     }catch(err){
