@@ -64,6 +64,15 @@ router.get("/getHomejobs", verifyHomeJobs, async (req, res) => {
         res.status(401).send("server issue")
     }
 })
+// ............get all Home jobs for all......
+router.get("/getAdminjobs", verifyHomeJobs, async (req, res) => {
+    try {
+        let result = await JobpostsModel.aggregate([{ $match: { Adminpost: true } }])
+        res.send(result)
+    } catch (err) {
+        res.status(401).send("server issue")
+    }
+})
 
 // employee job postings
 router.post("/jobpost", verifyToken, async (req, res) => {

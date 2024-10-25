@@ -66,6 +66,7 @@ router.post("/Careerjobpost", verifyToken, async (req, res) => {
 })
 // get all jobs........
 router.get("/getCareerjobs", verifyHomeJobs, async (req, res) => {
+
     try {
         let jobs = await CareerJobpostsModel.find().select()
         res.send(jobs)
@@ -131,6 +132,16 @@ router.put("/updatforJobApply/:id", verifyToken, async (req, res) => {
 
     } catch (err) {
         res.send("back end error occured")
+    }
+})
+
+// ...........delete posted job for employee..............
+router.delete("/deleteJobs/:id",verifyHomeJobs, async (req, res) => {
+    let result = await CareerJobpostsModel.deleteOne({ _id: req.params.id })
+    if (result) {
+        res.send(result)
+    } else {
+        res.send("error")
     }
 })
 
