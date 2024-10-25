@@ -5,6 +5,7 @@ const app = express();
 const StudentProfileRoutes = require("./Routes/StudentProfileRoutes");
 const EmpProfileRoutes = require("./Routes/EmpProfileRoutes");
 const jobpostRoutes = require("./Routes/JobpostsRoutes");
+const CareerjobpostRoutes = require("./Routes/CareerJobpostsRoutes");
 const adminRoutes =require("./Routes/AdminRout")
 const PaymentRoute = require("./Routes/PaymentRout")
 const StudentProfileModel = require("./Schema/StudentProfileSchema")
@@ -26,6 +27,7 @@ app.use(express.static('public'))
 app.use("/StudentProfile",StudentProfileRoutes)
 app.use("/EmpProfile",EmpProfileRoutes)
 app.use("/jobpost", jobpostRoutes)
+app.use("/Careerjobpost", CareerjobpostRoutes)
 app.use("/admin", adminRoutes)
 app.use("/paymentAPI", PaymentRoute)
 

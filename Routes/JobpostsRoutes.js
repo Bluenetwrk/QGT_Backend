@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const JobpostsModel = require("../Schema/PostJobSchema")
+const CareerJobpostsModel = require("../Schema/CareerJobSchema")
 const JobAppliedModel = require("../Schema/JobAppliedSchema")
 const StudentProfileModel= require("../Schema/StudentProfileSchema")
 const Archived= require("../Schema/ArchiveAchema")
@@ -82,6 +83,7 @@ router.post("/jobpost", verifyToken, async (req, res) => {
     }
 })
 
+
 // .........getJobs for job details...........
 router.get("/getjobs/:id",verifyHomeJobs, async (req, res) => {
     try {
@@ -158,6 +160,7 @@ router.get("/searchJob/:key", async(req,res)=>{
     res.send("error occured")
 }   
 })
+
 
 // ..........update for job applyjobs for job seeker..................
 router.put("/updatforJobApply/:id", verifyToken, async (req, res) => {
@@ -361,7 +364,6 @@ router.get("/getTagsJobs/:name", async(req, res)=>{
 // Archive CheckBox Jobs for admin
 router.delete("/ArchiveCheckBoxArray/:ids", verifyToken, async(req, res)=>{
     let comingIds = req.params.ids.split(",")
-    console.log("comingIds", comingIds)
     try{        
 
         let foundJobs=await JobpostsModel.find({_id:{$in:comingIds}})
@@ -374,7 +376,6 @@ router.delete("/ArchiveCheckBoxArray/:ids", verifyToken, async(req, res)=>{
             })
            let insertedValue= await Archived.insertMany({Archived:archiveJobs});
         let deletedJobs=await JobpostsModel.deleteMany({_id:{$in:comingIds}})
-        console.log(deletedJobs)
         }
 res.send("success")
     }catch(err){
@@ -385,7 +386,6 @@ res.send("fail")
 router.get("/getArchiveJobs", async(req, res)=>{
     try{
         let result =await Archived.find({}, { Archived: 1, createdAt: 1})
-        console.log(result)
         res.send(result)
     }catch(err){
         console.log("error")
@@ -394,10 +394,8 @@ router.get("/getArchiveJobs", async(req, res)=>{
 })
 // delete CheckBox Jobs for admin
 router.delete("/deleteCheckBoxArray/:ids", verifyToken, async(req, res)=>{
-    let comingIds = req.params.ids.split(",")
-    console.log("comingIds", comingIds)
+    let comingIds = req.params.ids.split(",") //2
     try{        
-
         let foundJobs=await JobpostsModel.find({_id:{$in:comingIds}})
         if (foundJobs.length > 0) {
             let archiveJobs=foundJobs.map((jobs)=>{
@@ -405,9 +403,8 @@ router.delete("/deleteCheckBoxArray/:ids", verifyToken, async(req, res)=>{
                     jobs
                 )
             })
-           let insertedValue= await Deleted.insertMany({Archived:archiveJobs});
+        let insertedValue= await Deleted.insertMany({Archived:archiveJobs});
         let deletedJobs=await JobpostsModel.deleteMany({_id:{$in:comingIds}})
-        console.log(deletedJobs)
         }
 res.send("success")
     }catch(err){
@@ -418,11 +415,38 @@ res.send("fail")
 router.get("/getDeletedJobs", async(req, res)=>{
     try{
         let result =await Deleted.find({}, { Archived: 1, createdAt: 1})
-        console.log(result)
         res.send(result)
     }catch(err){
-        console.log("error")
         res.send("error")
+    }
+})
+
+// ...............................Career JobsPost for Admin.......................
+
+// Admin Career job postings
+router.post("/Careerjobpost", verifyToken, async (req, res) => {
+    try {
+        const {Logo, empId, companyName, jobTitle, jobDescription, jobtype, 
+            salaryRange, jobLocation, qualification, experiance, skills } = (req.body)
+        if ( !jobDescription || !companyName || !experiance || !jobLocation) {
+            res.send("field are missing")
+        } else {
+            let jobs = new CareerJobpostsModel(req.body)
+            let result = await jobs.save()
+            res.send("success")
+        }
+    } catch (error) {
+        // console.log(error.message)
+        res.send("server issue ")
+    }
+})
+
+router.get("/getCareerjobs", verifyHomeJobs, async (req, res) => {
+    try {
+        let jobs = await CareerJobpostsModel.find().select()
+        res.send(jobs)
+    } catch (err) {
+        res.status(401).send("server issue")
     }
 })
 

@@ -3,6 +3,7 @@ const mongoose = require("mongoose")
 const profileSchema= new mongoose.Schema({
     image : {
         type:String
+        // data:Buffer
     },
     Gpicture : { 
         type:String
@@ -14,7 +15,7 @@ const profileSchema= new mongoose.Schema({
         type:String
     },
     city:{
-        type:String
+        type:Object
     },
     email: {
         type: String,

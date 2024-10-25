@@ -77,5 +77,5 @@ onHoldJobseker:[
 
 {timestamps:true}
 )
-const productModel = mongoose.model("JobPosts" , productSchema)
+const productModel = mongoose.model("Career-JobPosts" , productSchema)
 module.exports = productModel
