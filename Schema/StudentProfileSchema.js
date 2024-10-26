@@ -17,6 +17,9 @@ const profileSchema= new mongoose.Schema({
     city:{
         type:Object
     },
+    college:{
+        type:Object
+    },
     email: {
         type: String,
         unique: true

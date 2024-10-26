@@ -75,6 +75,17 @@ router.get("/getCareerjobs", verifyHomeJobs, async (req, res) => {
     }
 })
 
+// ............for job details............
+
+router.get("/getjobDetails/:id",verifyHomeJobs, async (req, res) => {
+    try {
+        let jobs = await CareerJobpostsModel.findOne({ _id: req.params.id })
+        res.send(jobs)
+    } catch (err) {
+        res.status(401).send("server issue")
+    }
+})
+
 // get tag filtered jobs.......
 router.get("/getTagsJobs/:name", async(req, res)=>{
     try{
@@ -145,6 +156,50 @@ router.delete("/deleteJobs/:id",verifyHomeJobs, async (req, res) => {
     }
 })
 
+//  get user id's for who has applied for job from a single job
+router.get("/getAppliedUserIds/:id", async(req,res)=>{
+    try{
+        let JobIds= await CareerJobpostsModel.findOne({_id:req.params.id})
+        if(JobIds){
+            res.send(JobIds)
+        }else{
+            res.send("not found")
+        }
+    }catch(err){
+        res.send("server error occured")
+    }
+})
+
+// .select , reject, onhold..............
+router.put("/status/:id", async(req, res)=>{
+    try{
+        let result= await CareerJobpostsModel.updateOne(
+            {_id:req.params.id},
+            {$push:req.body}
+        )
+        if(result){
+            res.send("success")
+                }        
+    }catch(err){
+        res.send("back error occured")
+    }
+})
+
+// .......upate for undoJobApply.............
+
+router.put("/updatforUndoJobApplied/:id", async (req, res) => {
+    try {
+        let result = await CareerJobpostsModel.updateOne(           
+            {_id: req.params.id}, 
+            {$pull:req.body}
+         )
+        if (result) {
+            res.send("success")
+        }                     
+    } catch (err) {
+        res.send("back end error occured")
+    }
+})
 
 
 module.exports = router
