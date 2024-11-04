@@ -191,7 +191,7 @@ router.put("/updatforUndoJobApplied/:id", async (req, res) => {
     try {
         let result = await CareerJobpostsModel.updateOne(           
             {_id: req.params.id}, 
-            {$pull:req.body}
+            {$pull:{jobSeekerId:req.body}}
          )
         if (result) {
             res.send("success")
