@@ -360,11 +360,11 @@ router.get("/getLimitJobs/:limit", async(req, res)=>{
 })
 
 router.get("/getTagsJobs/:name", async(req, res)=>{
-    // console.log(comingArray)
     try{
-        // let result = await JobpostsModel.aggregate([{$match:{Tags:req.params.name}}])
-    let result = await JobpostsModel.find({Tags: {$elemMatch: {value: req.params.name }}})
-// console.log(result)
+        let result = await JobpostsModel.aggregate([{$match:{Tags:req.params.name}}]) 
+        //or
+    // let result = await JobpostsModel.find({Tags:  req.params.name })
+    // let result = await JobpostsModel.find({Tags: {$elemMatch: {value: req.params.name }}}) // this one if for object in array in db
         res.send(result)
     }catch(err){
         res.send("server error")
