@@ -89,8 +89,8 @@ router.get("/getjobDetails/:id",verifyHomeJobs, async (req, res) => {
 // get tag filtered jobs.......
 router.get("/getTagsJobs/:name", async(req, res)=>{
     try{
-        // let result = await JobpostsModel.aggregate([{$match:{Tags:req.params.name}}])
-    let result = await CareerJobpostsModel.find({Tags: {$elemMatch: {value: req.params.name,label: req.params.name }}})
+        let result = await CareerJobpostsModel.aggregate([{$match:{Tags:req.params.name}}])
+    // let result = await CareerJobpostsModel.find({Tags: {$elemMatch: {value: req.params.name,label: req.params.name }}})
 
         res.send(result)
     }catch(err){
@@ -182,6 +182,17 @@ router.put("/status/:id", async(req, res)=>{
                 }        
     }catch(err){
         res.send("back error occured")
+    }
+})
+
+// ................get jobs for myappliedjobs for jobseeker.......
+router.get("/getMyAppliedjobs/:id", verifyToken, async (req, res) => {
+    try {
+        // let jobs = await JobpostsModel.find({jobSeekerId: req.params.id })
+    let jobs = await CareerJobpostsModel.find({jobSeekerId: {$elemMatch: {jobSeekerId: req.params.id }}})
+        res.send(jobs)
+    } catch (err) {
+        res.status(401).send("server issue")
     }
 })
 
