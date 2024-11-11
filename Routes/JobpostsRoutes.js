@@ -334,7 +334,6 @@ router.get("/getjobLocation/:id", async(req, res)=>{
 router.post("/getBothjobFilter/:id", async(req, res)=>{
     let LocationParams = req.params.id
     let TitleBody = req.body
-
     try{
           if(LocationParams && TitleBody)
            {
