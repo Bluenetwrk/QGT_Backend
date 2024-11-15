@@ -50,9 +50,9 @@ qualification:{
 experiance:{
     type : String
 },
-skills:{
-    type : String
-} ,
+skills:[
+    // type : String
+ ] ,
 jobSeekerId:[
     {
         jobSeekerId:{
