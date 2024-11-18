@@ -2,8 +2,8 @@ const mongoose = require("mongoose")
 
 const profileSchema= new mongoose.Schema({
     image : {
-        // type:String
-        type:Buffer
+        type:String
+        // type:Buffer
     },
     Gpicture : { 
         type:String

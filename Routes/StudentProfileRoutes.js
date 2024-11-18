@@ -52,8 +52,6 @@ router.put("/uploadImage/:id", upload.single('image'), async (req, res) => {
     imagePath = req.file.filename
     try {
 const binary = Buffer.from(imagePath)
-console.log(binary)
-
         let result = await StudentProfileModel.updateOne(
             { _id: req.params.id },
             // { $set: { image: `https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/${imagePath}` } }
@@ -63,6 +61,7 @@ console.log(binary)
 // { $set: { image: binary } }
       
         )
+
         if (result) {
             res.send(result)
         }
