@@ -196,14 +196,28 @@ router.get("/getMyAppliedjobs/:id", verifyToken, async (req, res) => {
     }
 })
 
-// .......upate for undoJobApply.............
-
+// .......Undo Select , Reject, OnHold.............
 router.put("/updatforUndoJobApplied/:id", async (req, res) => {
     try {
         let result = await CareerJobpostsModel.updateOne(           
             {_id: req.params.id}, 
-            {$pull:{jobSeekerId:req.body}}
+            {$pull:req.body}
          )
+        if (result) {
+            res.send("success")
+        }                     
+    } catch (err) {
+        res.send("back end error occured")
+    }
+})
+
+// .......upate for undoJobApply..or delete Job Applied...........
+
+router.put("/DeleteJobApplied/:id", async (req, res) => {
+    try {
+        let result = await CareerJobpostsModel.updateOne(           
+            {_id: req.params.id}, 
+            {$pull:{jobSeekerId:req.body}}  )
         if (result) {
             res.send("success")
         }                     

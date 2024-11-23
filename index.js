@@ -5,6 +5,7 @@ const app = express();
 const StudentProfileRoutes = require("./Routes/StudentProfileRoutes");
 const EmpProfileRoutes = require("./Routes/EmpProfileRoutes");
 const jobpostRoutes = require("./Routes/JobpostsRoutes");
+const BlockRoutes = require("./Routes/BlogPostRoutes");
 const CareerjobpostRoutes = require("./Routes/CareerJobpostsRoutes");
 const adminRoutes =require("./Routes/AdminRout")
 const PaymentRoute = require("./Routes/PaymentRout")
@@ -27,6 +28,7 @@ app.use(express.static('public'))
 app.use("/StudentProfile",StudentProfileRoutes)
 app.use("/EmpProfile",EmpProfileRoutes)
 app.use("/jobpost", jobpostRoutes)
+app.use("/BlogRoutes",BlockRoutes)
 app.use("/Careerjobpost", CareerjobpostRoutes)
 app.use("/admin", adminRoutes)
 app.use("/paymentAPI", PaymentRoute)
@@ -38,6 +40,7 @@ app.use("/paymentAPI", PaymentRoute)
 //     res.send(" Itwalkin server is down")
 // }
 // })
+
 
 app.use("*", (req, res) => {    
         res.send(" Itwalkin could not fetch this API")    

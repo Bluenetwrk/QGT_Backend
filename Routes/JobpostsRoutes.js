@@ -64,7 +64,7 @@ router.get("/getHomejobs", verifyHomeJobs, async (req, res) => {
         res.status(401).send("server issue")
     }
 })
-// ............get all Home jobs for all......
+// ............get all H jobs for all posted by admin for admin my posted jobs......
 router.get("/getAdminjobs", verifyHomeJobs, async (req, res) => {
     try {
         let result = await JobpostsModel.aggregate([{ $match: { Adminpost: true } }])
@@ -230,16 +230,38 @@ router.get("/getMyAppliedjobs/:id", verifyToken, async (req, res) => {
 })
 
 
-// .......upate for undoJobApply.............
+// .......Undo Select , Reject, OnHold.............
 
 router.put("/updatforUndoJobApplied/:id", async (req, res) => {
     try {
         let result = await JobpostsModel.updateOne(           
             {_id: req.params.id}, 
-            {$pull:{jobSeekerId:req.body}}  )
+            {$pull:req.body}  )
         if (result) {
             res.send("success")
         }                     
+    } catch (err) {
+        res.send("back end error occured")
+    }
+})
+// .......upate for undoJobApply..or delete Job Applied...........
+
+router.put("/DeleteJobApplied/:id", async (req, res) => {
+    try {
+        let result = await JobpostsModel.updateOne(           
+            {_id: req.params.id}, 
+            {$pull:{jobSeekerId:req.body}}  )
+            if(result.matchedCount===0){
+                let careerResult = await CareerJobpostsModel.updateOne(           
+                    {_id: req.params.id}, 
+                    {$pull:{jobSeekerId:req.body}} )
+                 if (careerResult) {
+                    res.send("success")
+                }
+            }else{            
+                    res.send("success")
+                }
+                                        
     } catch (err) {
         res.send("back end error occured")
     }
