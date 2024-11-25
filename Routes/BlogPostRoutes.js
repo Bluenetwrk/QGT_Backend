@@ -72,5 +72,28 @@ router.get("/getAllBlogs", verifyHomeJobs, async (req, res) => {
     }
 })
 
+//  get job by Tag filter
+router.get("/getTagsJobs/:name", async(req, res)=>{
+    try{
+        let result = await BlogModel.aggregate([{$match:{Tags:req.params.name}}]) 
+        //or
+    // let result = await JobpostsModel.find({Tags:  req.params.name })
+    // let result = await JobpostsModel.find({Tags: {$elemMatch: {value: req.params.name }}}) //this one if for object in array in db
+        res.send(result)
+    }catch(err){
+        res.send("server error")
+    }
+})
+
+// .........getJobs for job details...........
+router.get("/getjobs/:id",verifyHomeJobs, async (req, res) => {
+    try {
+        let jobs = await BlogModel.findOne({ _id: req.params.id })
+        res.send(jobs)
+    } catch (err) {
+        res.status(401).send("server issue")
+    }
+})
+
 
 module.exports=router

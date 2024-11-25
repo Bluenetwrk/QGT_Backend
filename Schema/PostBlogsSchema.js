@@ -11,6 +11,9 @@ jobTitle:{
 companyName:{
     type : String
 },
+name:{
+    type : String
+},
 SourceLink:{
     type : String
 },

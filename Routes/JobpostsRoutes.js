@@ -381,6 +381,7 @@ router.get("/getLimitJobs/:limit", async(req, res)=>{
     }
 })
 
+//  get job by Tag filter
 router.get("/getTagsJobs/:name", async(req, res)=>{
     try{
         let result = await JobpostsModel.aggregate([{$match:{Tags:req.params.name}}]) 
