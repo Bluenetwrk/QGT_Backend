@@ -30,7 +30,7 @@ adminLogin:{
     type : String
 },
 jobDescription:{
-    type : Array
+    type : String
 },
 jobtype:{
     type : String

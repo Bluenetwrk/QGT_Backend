@@ -295,6 +295,23 @@ router.put("/status/:id", async(req, res)=>{
     }
 
 })
+//   ..... delete  all field of job description.....
+router.put("/deleteDescription", async(req, res)=>{
+    try{
+        let result= await JobpostsModel.
+        updateMany(
+            {},
+            { $unset: { "jobDescription": "" } }
+         
+        )
+        if(result){
+            res.send("success")
+                }        
+    }catch(err){
+        res.send("back error occured")
+    }
+
+})
 
 // ....delete job for admin....
 router.delete("/deleteJob/:id", async (req, res) => {
