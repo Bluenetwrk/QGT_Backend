@@ -17,8 +17,8 @@ const { MongoClient } = require("mongodb")
 const mongoose = require("mongoose");
 //const port = process.env.PORT
 const port = 8080
-mongoose.connect("mongodb+srv://blueimpluse:jobportal1234@cluster0.5dgcnm4.mongodb.net/jobportalMern")
-// mongoose.connect("mongodb://127.0.0.1:27017/Job-Portal-Database")
+// mongoose.connect("mongodb+srv://blueimpluse:jobportal1234@cluster0.5dgcnm4.mongodb.net/jobportalMern")
+mongoose.connect("mongodb://127.0.0.1:27017/Job-Portal-Database")
     .then((res) => { console.log("connected") })
     .catch((err) => { console.log("failed") })
 
@@ -46,6 +46,7 @@ app.use("/paymentAPI", PaymentRoute)
 app.use("*", (req, res) => {    // if no API are made 
         res.send(" Itwalkin could not fetch this API")    
 })
+
 
 const http = require("http")
 const Server=require('socket.io').Server
