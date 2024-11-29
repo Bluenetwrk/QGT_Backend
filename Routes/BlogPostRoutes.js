@@ -63,7 +63,7 @@ router.post("/blogpost", verifyToken, async (req, res) => {
 })
 
 // ............get all Home jobs for all......
-router.get("/getAllBlogs", verifyHomeJobs, async (req, res) => {
+router.get("/getAllBlogs",  async (req, res) => {
     try {
         let jobs = await BlogModel.find().select()
         res.send(jobs)
