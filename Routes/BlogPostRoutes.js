@@ -51,6 +51,7 @@ function verifyHomeJobs(req, res, next){
 
 // employee Blog  postings
 router.post("/blogpost", verifyToken, async (req, res) => {
+    console.log(req.body)
     try {
             let jobs = new BlogModel(req.body)
             let result = await jobs.save()

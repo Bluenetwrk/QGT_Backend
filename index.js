@@ -33,6 +33,7 @@ app.use("/Careerjobpost", CareerjobpostRoutes)
 app.use("/admin", adminRoutes)
 app.use("/paymentAPI", PaymentRoute)
 
+
 // app.use("/", (req, res)=>{
 //     try{
 //     res.send("It-walkin server is up and running")
@@ -42,7 +43,7 @@ app.use("/paymentAPI", PaymentRoute)
 // })
 
 
-app.use("*", (req, res) => {    
+app.use("*", (req, res) => {    // if no API are made 
         res.send(" Itwalkin could not fetch this API")    
 })
 
