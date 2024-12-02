@@ -402,6 +402,7 @@ router.get("/getLimitJobs/:limit", async(req, res)=>{
 router.get("/getTagsJobs/:name", async(req, res)=>{
     try{
         let result = await JobpostsModel.aggregate([{$match:{Tags:req.params.name}}]) 
+        console.log(result)
         //or
     // let result = await JobpostsModel.find({Tags:  req.params.name })
     // let result = await JobpostsModel.find({Tags: {$elemMatch: {value: req.params.name }}}) // this one if for object in array in db
