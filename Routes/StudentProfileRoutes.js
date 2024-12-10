@@ -56,8 +56,8 @@ const binary = Buffer.from(imagePath)
             { _id: req.params.id },
             // { $set: { image: `https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/${imagePath}` } }
             // { $set: { image: `http://localhost:8080/Images/${imagePath}` } }
-            // { $set: { image: `https://itwalkin-backend-testrelease-2-0-1-0824-ns0g.onrender.com/Images/${imagePath}` } }
-               { $set: { image: `https://i-twalkin-backend-testrelease-2-0-1-0824.vercel.app/Images/${imagePath}`}}
+            { $set: { image: `https://itwalkin-backend-testrelease-2-0-1-0824-ns0g.onrender.com/Images/${imagePath}` } }
+            //    { $set: { image: `https://i-twalkin-backend-testrelease-2-0-1-0824.vercel.app/Images/${imagePath}`}}
 // { $set: { image: binary } }
       
         )
@@ -76,8 +76,8 @@ router.put("/deleteImage/:id", async (req, res) => {
     const comingImagepath = req.body.image
     // const trimImagepath = comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824.onrender.com/Images/", "")
     // const trimImagepath = comingImagepath.replace("http://localhost:8080/Images/", "")
-    // const trimImagepath = comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824-ns0g.onrender.com/Images/", "")
-    const trimImagepath = comingImagepath.replace("https://i-twalkin-backend-testrelease-2-0-1-0824.vercel.app/Images/", "")
+    const trimImagepath = comingImagepath.replace("https://itwalkin-backend-testrelease-2-0-1-0824-ns0g.onrender.com/Images/", "")
+    // const trimImagepath = comingImagepath.replace("https://i-twalkin-backend-testrelease-2-0-1-0824.vercel.app/Images/", "")
     const filepath = `public/Images/${trimImagepath}`
     try {
         let result = await StudentProfileModel.updateOne(
