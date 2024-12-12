@@ -40,7 +40,7 @@ function verifyToken(req, res, next){
 }
 }
 // middleware for 
-function verifyHomeJobs(req, res, next){
+function verifyHome(req, res, next){
     let valid=req.headers['authorization']
     if(valid==='BlueItImpulseWalkinIn'){
         next()
@@ -50,8 +50,7 @@ function verifyHomeJobs(req, res, next){
 }
 
 // employee Blog  postings
-router.post("/blogpost", verifyToken, async (req, res) => {
-    console.log(req.body)
+router.post("/blogpost", verifyHome, async (req, res) => {
     try {
             let jobs = new BlogModel(req.body)
             let result = await jobs.save()
@@ -87,7 +86,7 @@ router.get("/getTagsJobs/:name", async(req, res)=>{
 })
 
 // .........getJobs for job details...........
-router.get("/getjobs/:id",verifyHomeJobs, async (req, res) => {
+router.get("/getjobs/:id",verifyHome, async (req, res) => {
     try {
         let jobs = await BlogModel.findOne({ _id: req.params.id })
         res.send(jobs)
