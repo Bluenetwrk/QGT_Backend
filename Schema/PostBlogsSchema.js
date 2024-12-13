@@ -53,6 +53,12 @@ qualification:{
 experiance:{
     type : String
 },
+comments:[
+
+],
+question:{
+type:Boolean
+},
 skills:[
     // type : String
  ] ,

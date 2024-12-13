@@ -96,5 +96,20 @@ router.get("/getjobs/:id",verifyHome, async (req, res) => {
     }
 })
 
+router.put("/Addcomment/:id", verifyHome, async(req, res)=>{
+    try{
+        let result= await BlogModel.updateOne(
+            {_id:req.params.id},
+            {$push:req.body}
+        )
+        if(result){
+            res.send("success")
+                }        
+    }catch(err){
+        res.send("back error occured")
+    }
+
+})
+
 
 module.exports=router
