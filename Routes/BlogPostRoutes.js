@@ -42,6 +42,7 @@ function verifyToken(req, res, next){
 // middleware for 
 function verifyHome(req, res, next){
     let valid=req.headers['authorization']
+    // console.log(valid)
     if(valid==='BlueItImpulseWalkinIn'){
         next()
 }else{
@@ -50,7 +51,7 @@ function verifyHome(req, res, next){
 }
 
 // employee Blog  postings
-router.post("/blogpost", verifyHome, async (req, res) => {
+router.post("/blogpost",  async (req, res) => {
     try {
             let jobs = new BlogModel(req.body)
             let result = await jobs.save()
