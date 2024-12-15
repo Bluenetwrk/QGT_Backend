@@ -108,7 +108,19 @@ router.put("/Addcomment/:id", verifyHome, async(req, res)=>{
     }catch(err){
         res.send("back error occured")
     }
-
+})
+router.put("/Ad", verifyHome, async(req, res)=>{
+    try{
+        let result= await BlogModel.updateOne(
+            {_id:req.params.id},
+            {$push:req.body}
+        )
+        if(result){
+            res.send("success")
+                }        
+    }catch(err){
+        res.send("back error occured")
+    }
 })
 
 
