@@ -109,12 +109,14 @@ router.put("/Addcomment/:id", verifyHome, async(req, res)=>{
         res.send("back error occured")
     }
 })
-router.put("/Ad", verifyHome, async(req, res)=>{
+router.put("/deletComment/:id", verifyHome, async(req, res)=>{
+    // console.log(req.body)
     try{
         let result= await BlogModel.updateOne(
             {_id:req.params.id},
-            {$push:req.body}
+            {$pull: {comments:req.body}}
         )
+        // console.log(result)
         if(result){
             res.send("success")
                 }        

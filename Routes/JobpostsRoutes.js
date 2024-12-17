@@ -499,4 +499,5 @@ router.get("/getCareerjobs", verifyHomeJobs, async (req, res) => {
     }
 })
 
+
 module.exports = router
