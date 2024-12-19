@@ -388,10 +388,14 @@ router.post("/getBothjobFilter/:id", async(req, res)=>{
 })
 
 //  pagination , get Limited jobs (never used API)
-router.get("/getLimitJobs/:limit", async(req, res)=>{
+router.get("/getLimitJobs/:limit", verifyHomeJobs, async(req, res)=>{
     let limitValue = (parseInt(req.params.limit))
     try{
-       let result = await JobpostsModel.aggregate([{$limit:limitValue}])
+    //    let result = await JobpostsModel.aggregate([{$limit:limitValue}])
+    //    let result = await JobpostsModel.find().sort({ $natural: -1 }).limit(3)
+       let result = await JobpostsModel.find().sort({ createdAt: -1 }).skip(10).limit(10)
+
+       
        res.send(result)
     }catch(err){
         res.send("server error")

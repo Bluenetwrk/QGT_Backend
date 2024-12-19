@@ -86,6 +86,50 @@ router.get("/getTagsJobs/:name", async(req, res)=>{
     }
 })
 
+// ................get my posted Articls and questions for emplyee amd jobseeker.......
+router.get("/getPostedjobs/:id", verifyToken, async (req, res) => {
+    try {
+        let jobs = await BlogModel.find({ empId: req.params.id })
+        res.send(jobs)
+    } catch (err) {
+        res.status(401).send("server issue", err)
+    }
+})
+
+// .......... get jobs for update for emplyee........
+router.get("/getJobForUpdate/:id",verifyToken, async (req, res) => {
+    try {
+        let jobs = await BlogModel.findOne({ _id: req.params.id })
+        res.send(jobs)
+    } catch (err) {
+        res.status(401).send( err)
+    }
+})
+// ..........update for emplyee job posts............
+router.put("/updatPostedJob/:id", verifyToken, async (req, res) => {
+    try {
+        let result = await BlogModel.updateOne(
+           { _id: req.params.id},
+           {$set:req.body}
+         )
+        if (result) {
+            res.send("success")
+        }         
+    } catch (err) {
+        res.send("back end error occured")
+    }
+})
+
+// ...........delete posted job for employee..............
+router.delete("/deleteProduct/:id",verifyToken, async (req, res) => {
+    let result = await BlogModel.deleteOne({ _id: req.params.id })
+    if (result) {
+        res.send(result)
+    } else {
+        res.send("error")
+    }
+})
+
 // .........getJobs for job details...........
 router.get("/getjobs/:id",verifyHome, async (req, res) => {
     try {
@@ -125,5 +169,20 @@ router.put("/deletComment/:id", verifyHome, async(req, res)=>{
     }
 })
 
+// Delete any field
 
+// router.put("/deleteComment", async (req, res)=>{
+//     console.log("clicked")
+//     try{
+//         let result= await BlogModel.updateMany({},
+//             {$unset:{comments:""}}
+//         )
+//         console.log(result)
+
+//     }catch(err){
+//         res.send("back error occured")
+//         console.log(err)
+
+//     }
+// })
 module.exports=router
