@@ -406,6 +406,13 @@ router.get("/getLimitJobs/:limit", verifyHomeJobs, async(req, res)=>{
 router.get("/getTagsJobs/:name", async(req, res)=>{
     try{
         let result = await JobpostsModel.aggregate([{$match:{Tags:req.params.name}}]) 
+    //    let ids= result.map((id, i)=>{
+    //         return(
+    //             id._id
+    //         )
+    //     })
+    //     console.log(ids)
+
         //or
     // let result = await JobpostsModel.find({Tags:  req.params.name })
     // let result = await JobpostsModel.find({Tags: {$elemMatch: {value: req.params.name }}}) // this one if for object in array in db
