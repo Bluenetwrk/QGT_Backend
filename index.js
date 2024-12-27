@@ -24,14 +24,14 @@ mongoose.connect("mongodb+srv://blueimpluse:jobportal1234@cluster0.5dgcnm4.mongo
     .catch((err) => { console.log("failed") })
 
 app.use(express.json())
-app.use(cors(
-    ({
-        origin: 'https://example.com',
-        methods: ['GET', 'POST', 'PUT', 'DELETE'],
-        allowedHeaders: ['Content-Type', 'X-Custom-Header'],
-        credentials: true,
-      })
-))
+app.use(cors()
+    // (({
+    //     origin: 'http://localhost.com',
+    //     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    //     allowedHeaders: ['Content-Type', 'X-Custom-Header'],
+    //     credentials: true,
+    //   }))
+)
 app.use(express.static('public'))
 app.use("/StudentProfile",StudentProfileRoutes)
 app.use("/EmpProfile",EmpProfileRoutes)

@@ -150,13 +150,15 @@ router.post("/verifyOtp", async (req, res) => {
     }
 })
 router.post("/Glogin", async (req, res) => {
+    // console.log(req.body)
     try {
     let { userId, gtoken, email, name, isApproved, ipAddress } = (req.body)
 
         let user = await EmpProfileModel.findOne({ email: email });
         if (user == null) {
-        const user = await new EmpProfileModel({ email: email, name: name,  userId : userId, 
-            isApproved:isApproved, ipAddress:ipAddress})
+        const user = await new EmpProfileModel(req.body)
+        // const user = await new EmpProfileModel({ email: email, name: name,  userId : userId, 
+        //     isApproved:isApproved, ipAddress:ipAddress})
         const result = await user.save(user)                     
 var transporter = nodemailer.createTransport({
     service: 'gmail',
