@@ -6,7 +6,7 @@ const CareerJobpostsModel = require("../Schema/CareerJobSchema")
 const JobAppliedModel = require("../Schema/JobAppliedSchema")
 const StudentProfileModel= require("../Schema/StudentProfileSchema")
 const Archived= require("../Schema/ArchiveAchema")
-const Deleted= require("../Schema/DeletedJobsSchema")
+const DeletedBlog= require("../Schema/DeletedBlogSchema")
 var nodemailer = require('nodemailer');
 
 const { MongoClient } = require("mongodb")
@@ -168,6 +168,38 @@ router.put("/deletComment/:id", verifyHome, async(req, res)=>{
         res.send("back error occured")
     }
 })
+
+
+// delete CheckBox Blogs for admin
+router.delete("/deleteCheckBoxArray/:ids", verifyToken, async(req, res)=>{
+    let comingIds = req.params.ids.split(",") //2
+    
+    try{        
+        let foundJobs=await BlogModel.find({_id:{$in:comingIds}})
+        if (foundJobs.length > 0) {
+            let archiveJobs=foundJobs.map((jobs)=>{
+                return(
+                    jobs
+                )
+            })
+        let insertedValue= await DeletedBlog.insertMany({Archived:archiveJobs});
+        let deletedJobs=await BlogModel.deleteMany({_id:{$in:comingIds}})
+        }
+res.send("success")
+    }catch(err){
+res.send("fail")
+    }
+})
+
+router.get("/getDeletedJobs", async(req, res)=>{
+    try{
+        let result =await DeletedBlog.find({}, { Archived: 1, createdAt: 1})
+        res.send(result)
+    }catch(err){
+        res.send("error")
+    }
+})
+
 
 // Delete any field
 

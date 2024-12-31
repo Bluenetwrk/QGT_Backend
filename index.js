@@ -18,20 +18,30 @@ const { MongoClient } = require("mongodb")
 const mongoose = require("mongoose");
 //const port = process.env.PORT
 const port = 8080
-mongoose.connect("mongodb+srv://blueimpluse:jobportal1234@cluster0.5dgcnm4.mongodb.net/jobportalMern")
+const dotenv =require("dotenv");
+dotenv.config();
+mongoose.connect(process.env.URL)
 // mongoose.connect("mongodb://127.0.0.1:27017/Job-Portal-Database")
     .then((res) => { console.log("connected") })
     .catch((err) => { console.log("failed") })
 
 app.use(express.json())
-app.use(cors()
+app.use(cors
+    (
+    // {
+    //     origin: 'http://localhost:3000', // Replace with your React app's origin
+    //     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    //     allowedHeaders: ['Content-Type', 'Authorization']
+    //   }
+    )
+)
     // (({
     //     origin: 'http://localhost.com',
     //     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     //     allowedHeaders: ['Content-Type', 'X-Custom-Header'],
     //     credentials: true,
     //   }))
-)
+
 app.use(express.static('public'))
 app.use("/StudentProfile",StudentProfileRoutes)
 app.use("/EmpProfile",EmpProfileRoutes)

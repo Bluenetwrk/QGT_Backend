@@ -113,7 +113,7 @@ router.get("/getPostedjobs/:id", verifyToken, async (req, res) => {
     }
 })
 // .......... get jobs for update for emplyee........
-router.get("/getJobForUpdate/:id",verifyToken, async (req, res) => {
+router.get("/getJobForUpdate/:id",verifyHomeJobs, async (req, res) => {
     try {
         let jobs = await JobpostsModel.findOne({ _id: req.params.id })
         res.send(jobs)
@@ -122,7 +122,7 @@ router.get("/getJobForUpdate/:id",verifyToken, async (req, res) => {
     }
 })
 // ..........update for emplyee job posts............
-router.put("/updatPostedJob/:id", verifyToken, async (req, res) => {
+router.put("/updatPostedJob/:id", verifyHomeJobs, async (req, res) => {
     try {
         let result = await JobpostsModel.updateOne(
            { _id: req.params.id},
@@ -136,7 +136,7 @@ router.put("/updatPostedJob/:id", verifyToken, async (req, res) => {
     }
 })
 // ...........delete posted job for employee..............
-router.delete("/deleteProduct/:id",verifyToken, async (req, res) => {
+router.delete("/deleteProduct/:id",verifyHomeJobs, async (req, res) => {
     let result = await JobpostsModel.deleteOne({ _id: req.params.id })
     if (result) {
         res.send(result)
@@ -452,6 +452,7 @@ router.get("/getArchiveJobs", async(req, res)=>{
         res.send("error")
     }
 })
+
 // delete CheckBox Jobs for admin
 router.delete("/deleteCheckBoxArray/:ids", verifyToken, async(req, res)=>{
     let comingIds = req.params.ids.split(",") //2

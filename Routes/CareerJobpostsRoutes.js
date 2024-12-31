@@ -226,5 +226,31 @@ router.put("/DeleteJobApplied/:id", async (req, res) => {
     }
 })
 
+// .......... get jobs for update for emplyee........
+router.get("/getJobForUpdate/:id", verifyHomeJobs, async (req, res) => {
+    try {
+        let jobs = await CareerJobpostsModel.findOne({ _id: req.params.id })
+        res.send(jobs)
+    } catch (err) {
+        res.status(401).send( err)
+    }
+})
+// ..........update for emplyee job posts............
+router.put("/updatPostedJob/:id", verifyHomeJobs, async (req, res) => {
+    try {
+        let result = await CareerJobpostsModel.updateOne(
+           { _id: req.params.id},
+           {$set:req.body}
+         )
+        if (result) {
+            res.send("success")
+        }         
+    } catch (err) {
+        res.send("back end error occured")
+    }
+})
+
+
+
 
 module.exports = router
