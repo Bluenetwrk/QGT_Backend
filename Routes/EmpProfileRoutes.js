@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const router = express.Router();
 const EmpProfileModel= require("../Schema/EmpProfileSchema")
+const NewEmpProfileRegistrationModel= require("../Schema/EmpNewRegistSchema")
 const bcrypt = require("bcrypt")
 const { body, validationResult } = require("express-validator")
 const jwt = require("jsonwebtoken")
@@ -11,6 +12,12 @@ const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 var nodemailer = require('nodemailer');
 const fs = require('fs')
+const axios = require('axios');
+const bodyParser = require('body-parser');
+  
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 
 function verifyToken(req, res, next){
     if(req.headers['authorization']){
@@ -32,6 +39,14 @@ function verifyToken(req, res, next){
 }
 }
 
+function verifyHomeJobs(req, res, next){
+    let valid=req.headers['authorization']
+    if(valid==='BlueItImpulseWalkinIn'){
+        next()
+}else{
+    res.send("Unauthorised Access")
+}
+}
 
 const storage = multer.diskStorage({
     destination: function(req, file, cb){
@@ -198,6 +213,64 @@ var transporter = nodemailer.createTransport({
         res.send(err)
     }
 })
+
+router.post("/NewEmployeeRegistration",  async(req, res)=>{
+    // console.log(req.body)
+
+    try{
+        const response = await axios.post(
+            'https://login.microsoftonline.com/ae4ae520-4db7-4149-ad51-778e540d8bec/oauth2/v2.0/token',
+            new URLSearchParams({
+                grant_type: 'client_credentials',
+                client_id: '097b08ff-185e-4153-aedc-0e5814e0570c',
+                client_secret: 'D1k8Q~yOxTlSdb_LB1tW118c4827PN~c7PK6JcMr',
+                scope: 'https://graph.microsoft.com/.default',
+            }),
+            {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+            }
+        );
+        if(response.data){
+            let User=await new NewEmpProfileRegistrationModel(req.body)
+            let result=await User.save()
+        }
+        res.json(response.data);
+        // console.log(response.data.access_token)
+    } catch (error) {
+        res.json(error.response);
+        // console.log(error.response.status)
+    }
+    
+    
+})
+
+// router.post('/get-token', async (req, res) => {
+//     try {
+//         const response = await axios.post(
+//             'https://login.microsoftonline.com/ae4ae520-4db7-4149-ad51-778e540d8bec/oauth2/v2.0/token',
+//             new URLSearchParams({
+//                 grant_type: 'client_credentials',
+//                 client_id: '097b08ff-185e-4153-aedc-0e5814e0570c',
+//                 client_secret: 'D1k8Q~yOxTlSdb_LB1tW118c4827PN~c7PK6JcMr',
+//                 scope: 'https://graph.microsoft.com/.default',
+//             }),
+//             {
+//                 headers: {
+//                     'Content-Type': 'application/x-www-form-urlencoded',
+//                 },
+//             }
+//         );
+//         res.status(200).json(response.data);
+//         console.log(response.data)
+//     } catch (error) {
+//         res.status(error.response.status).json(error.response.data);
+//         console.log(error)
+
+//     }
+// });
+
 
 
 // login for Admin in search params...

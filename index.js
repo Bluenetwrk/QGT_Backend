@@ -26,21 +26,14 @@ mongoose.connect(process.env.URL)
     .catch((err) => { console.log("failed") })
 
 app.use(express.json())
-app.use(cors
-    (
-    // {
-    //     origin: 'http://localhost:3000', // Replace with your React app's origin
-    //     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    //     allowedHeaders: ['Content-Type', 'Authorization']
-    //   }
-    )
-)
+app.use(cors())
     // (({
     //     origin: 'http://localhost.com',
     //     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     //     allowedHeaders: ['Content-Type', 'X-Custom-Header'],
     //     credentials: true,
     //   }))
+
 
 app.use(express.static('public'))
 app.use("/StudentProfile",StudentProfileRoutes)
