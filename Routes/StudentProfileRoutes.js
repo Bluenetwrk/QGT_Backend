@@ -153,6 +153,19 @@ router.post("/verifyOtp", async (req, res) => {
         res.send("backend issue")
     }
 })
+// .................Jobseeke Register ..............
+router.post("/JobseekerRegister", async (req, res) => {
+    // console.log(req.body)    
+    try {
+        let user = await new StudentProfileModel(req.body)
+        let result = await user.save()
+        if (result) {
+            res.send("success")
+        }
+    } catch (err) {
+        res.json(err.code)
+    }
+})
 
 // .....initial login.............................
 router.post("/Glogin", body('email').isEmail(), async (req, res) => {

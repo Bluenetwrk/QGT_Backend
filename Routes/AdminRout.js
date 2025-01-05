@@ -86,6 +86,7 @@ router.get("/getAllAdmin", async(req, res)=>{
 })
 
 router.put("/UpdateWebsite", async(req, res)=>{
+    // console.log(req.body)
     try{
         // let result = await AdminUpdateModel(req.body)
         // let data = await result.save()

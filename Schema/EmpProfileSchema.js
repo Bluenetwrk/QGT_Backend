@@ -30,6 +30,16 @@ type:String
     CompanyGSTIN:{
         type:String
     },
+    CompanyCIN:{
+        type:String
+    },
+    AboutCompany:{
+        type:String
+    },
+    secondaryuserDesignation:{
+        type:String
+    },
+    
     CompanyName:{
         type:String
     },

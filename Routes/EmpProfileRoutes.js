@@ -218,6 +218,8 @@ router.post("/NewEmployeeRegistration",  async(req, res)=>{
     // console.log(req.body)
 
     try{
+        let User=await new EmpProfileModel(req.body)
+        let result=await User.save()
         const response = await axios.post(
             'https://login.microsoftonline.com/ae4ae520-4db7-4149-ad51-778e540d8bec/oauth2/v2.0/token',
             new URLSearchParams({
@@ -232,15 +234,11 @@ router.post("/NewEmployeeRegistration",  async(req, res)=>{
                 },
             }
         );
-        if(response.data){
-            let User=await new NewEmpProfileRegistrationModel(req.body)
-            let result=await User.save()
-        }
         res.json(response.data);
         // console.log(response.data.access_token)
     } catch (error) {
-        res.json(error.response);
-        // console.log(error.response.status)
+        res.json(error.code);
+        // console.log(error.code)
     }
     
     
