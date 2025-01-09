@@ -197,7 +197,7 @@ router.put("/updatforJobApply/:id", verifyToken, async (req, res) => {
                 to: Usermail,
                 subject: `Succesfully Applied for the Job ${JobTile}`,
                 text: "you have applied for job successfully",
-                html: `You have Succesfully Applied for the Job ${JobTile}`+'<p>Click <a href="https://itwalkin-frontend.vercel.app/Jobdetails/' + btoa(req.params.id) + '"> here </a> to check the full details about the applied Job</p>'
+                html: `You have Succesfully Applied for the Job ${JobTile}`+'<p>Click <a href="https://www.itwalkin.com/Jobdetails/' + btoa(req.params.id) + '"> here </a> to check the full details about the applied Job</p>'
                 // context:paymentResult
               };
               
@@ -390,14 +390,14 @@ router.post("/getBothjobFilter/:id", async(req, res)=>{
 //  pagination , get Limited jobs (never used API)
 router.get("/getLimitJobs/:limit", verifyHomeJobs, async(req, res)=>{
     let limitValue = (parseInt(req.params.limit))
+    let page = (parseInt(req.query.currentPage))
+    // console.log(page)
     try{
-    //    let result = await JobpostsModel.aggregate([{$limit:limitValue}])
-    //    let result = await JobpostsModel.find().sort({ $natural: -1 }).limit(3)
-       let result = await JobpostsModel.find().sort({ createdAt: -1 }).skip(10).limit(10)
-
-       
+    //    let result = await JobpostsModel.aggregate([{$limit:limitValue}]) // old top 10
+       let result = await JobpostsModel.find().sort({ createdAt: -1 }).skip((page - 1) * limitValue).limit(limitValue)       
        res.send(result)
     }catch(err){
+        console.log(err)
         res.send("server error")
     }
 })
