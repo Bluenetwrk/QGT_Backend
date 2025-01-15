@@ -387,17 +387,26 @@ router.post("/getBothjobFilter/:id", async(req, res)=>{
     }
 })
 
+router.get("/getTotalCount", async(req, res)=>{
+    try{
+       let result =await JobpostsModel.estimatedDocumentCount()
+    //    console.log(result)
+       res.status(200).send({"result":result})
+    }catch(err){
+       res.status(401).send({"result":"server issue"})
+    }
+})
+
 //  pagination , get Limited jobs (never used API)
 router.get("/getLimitJobs/:limit", verifyHomeJobs, async(req, res)=>{
     let limitValue = (parseInt(req.params.limit))
     let page = (parseInt(req.query.currentPage))
     // console.log(page)
+    // console.log(limitValue)
     try{
-    //    let result = await JobpostsModel.aggregate([{$limit:limitValue}]) // old top 10
-       let result = await JobpostsModel.find().sort({ createdAt: -1 }).skip((page - 1) * limitValue).limit(limitValue)       
+       let result = await JobpostsModel.find().sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(10)
        res.send(result)
     }catch(err){
-        console.log(err)
         res.send("server error")
     }
 })

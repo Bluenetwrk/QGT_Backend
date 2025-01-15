@@ -46,6 +46,7 @@ app.use("/admin", adminRoutes)
 app.use("/paymentAPI", PaymentRoute)
 
 
+
 // app.use("/", (req, res)=>{
 //     try{
 //     res.send("It-walkin server is up and running")
