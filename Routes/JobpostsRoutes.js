@@ -404,7 +404,7 @@ router.get("/getLimitJobs/:limit", verifyHomeJobs, async(req, res)=>{
     // console.log(page)
     // console.log(limitValue)
     try{
-       let result = await JobpostsModel.find().sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(10)
+       let result = await JobpostsModel.find().sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
        res.send(result)
     }catch(err){
         res.send("server error")
