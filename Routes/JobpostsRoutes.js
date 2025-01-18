@@ -413,23 +413,50 @@ router.get("/getLimitJobs/:limit", verifyHomeJobs, async(req, res)=>{
 
 //  get job by Tag filter
 router.get("/getTagsJobs/:name", async(req, res)=>{
+    // console.log(req.params.name)
     try{
-        let result = await JobpostsModel.aggregate([{$match:{Tags:req.params.name}}]) 
-    //    let ids= result.map((id, i)=>{
-    //         return(
-    //             id._id
-    //         )
-    //     })
-    //     console.log(ids)
-
-        //or
-    // let result = await JobpostsModel.find({Tags:  req.params.name })
-    // let result = await JobpostsModel.find({Tags: {$elemMatch: {value: req.params.name }}}) // this one if for object in array in db
-        res.send(result)
+        let result = await JobpostsModel.aggregate([
+            {$match:{Tags:req.params.name}},
+            { $project: { _id: 1, createdAt: 1 } }
+        ])
+    // console.log(result)
+    res.send(result)
     }catch(err){
         res.send("server error")
     }
 })
+
+router.get("/jobTagsIds/:id", async (req, res) => {
+    let limitValue = (parseInt(req.query.recordsPerPage))
+    let page = (parseInt(req.query.currentPage))
+    // console.log(page)
+    // console.log(limitValue)
+    let comingArray = req.params.id
+    let spliArray = comingArray.split(",")
+
+    try {
+        // console.log("local value",['6533629f105bb11463d44bb4', '652f76a8eff06fe23539e03d','652f73966749e34e868567e1'])
+        const profile = await JobpostsModel.find({ _id: { $in: spliArray } })
+        .sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+        if (profile) {
+            res.send(profile)
+    // console.log(profile)
+
+        } else {
+            res.send("not found")
+        }
+
+    } catch (err) {
+        res.send("server error occured")
+        console.log(err)
+    }
+})
+
+
+
+
+
+
 // Archive CheckBox Jobs for admin
 router.delete("/ArchiveCheckBoxArray/:ids", verifyToken, async(req, res)=>{
     let comingIds = req.params.ids.split(",")

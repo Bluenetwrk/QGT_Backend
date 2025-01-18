@@ -307,8 +307,6 @@ router.get("/getAppliedProfileByIds/:id", async (req, res) => {
     }
 })
 
-
-
 // delete jobseeker Admin API
 router.delete("/deleteProfile/:id", async (req, res) => {
     try {
