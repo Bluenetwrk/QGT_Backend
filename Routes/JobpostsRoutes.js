@@ -413,16 +413,20 @@ router.get("/getLimitJobs/:limit", verifyHomeJobs, async(req, res)=>{
 
 //  get job by Tag filter
 router.get("/getTagsJobs/:name", async(req, res)=>{
-    // console.log(req.params.name)
+    let comingParam=req.params.name
+    let convertingArray=comingParam.split(",")
+    // console.log(convertingArray)
     try{
         let result = await JobpostsModel.aggregate([
-            {$match:{Tags:req.params.name}},
+            // {$match:{Tags:req.params.name}},
+            {$match:{Tags:{$in:convertingArray}}},
             { $project: { _id: 1, createdAt: 1 } }
         ])
     // console.log(result)
     res.send(result)
     }catch(err){
         res.send("server error")
+        console.log(err)
     }
 })
 
