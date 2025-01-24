@@ -387,15 +387,7 @@ router.post("/getBothjobFilter/:id", async(req, res)=>{
     }
 })
 
-router.get("/getTotalCount", async(req, res)=>{
-    try{
-       let result =await JobpostsModel.estimatedDocumentCount()
-    //    console.log(result)
-       res.status(200).send({"result":result})
-    }catch(err){
-       res.status(401).send({"result":"server issue"})
-    }
-})
+
 
 //  pagination , get Limited jobs (never used API)
 router.get("/getLimitJobs/:limit", verifyHomeJobs, async(req, res)=>{
@@ -411,6 +403,15 @@ router.get("/getLimitJobs/:limit", verifyHomeJobs, async(req, res)=>{
     }
 })
 
+router.get("/getTotalCount", async(req, res)=>{
+    try{
+       let result =await JobpostsModel.estimatedDocumentCount()
+    //    console.log(result)
+       res.status(200).send({"result":result})
+    }catch(err){
+       res.status(401).send({"result":"server issue"})
+    }
+})
 //  get job by Tag filter
 router.get("/getTagsJobs/:name", async(req, res)=>{
     let comingParam=req.params.name

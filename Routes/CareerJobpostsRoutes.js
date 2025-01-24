@@ -251,6 +251,59 @@ router.put("/updatPostedJob/:id", verifyHomeJobs, async (req, res) => {
 })
 
 
+router.get("/getTotalCount", async(req, res)=>{
+    try{
+       let result =await CareerJobpostsModel.estimatedDocumentCount()
+       res.status(200).send({"result":result})
+    }catch(err){
+       res.status(401).send({"result":"server issue"})
+    }
+})
+//  get job by Tag filter
+router.get("/getTagsJobs/:name", async(req, res)=>{
+    let comingParam=req.params.name
+    let convertingArray=comingParam.split(",")
+    // console.log(convertingArray)
+    try{
+        let result = await CareerJobpostsModel.aggregate([
+            // {$match:{Tags:req.params.name}},
+            {$match:{Tags:{$in:convertingArray}}},
+            { $project: { _id: 1, createdAt: 1 } }
+        ])
+    // console.log(result)
+    res.send(result)
+    }catch(err){
+        res.send("server error")
+        console.log(err)
+    }
+})
+
+router.get("/jobTagsIds/:id", async (req, res) => {
+    let limitValue = (parseInt(req.query.recordsPerPage))
+    let page = (parseInt(req.query.currentPage))
+    // console.log(page)
+    // console.log(limitValue)
+    let comingArray = req.params.id
+    let spliArray = comingArray.split(",")
+
+    try {
+        // console.log("local value",['6533629f105bb11463d44bb4', '652f76a8eff06fe23539e03d','652f73966749e34e868567e1'])
+        const profile = await CareerJobpostsModel.find({ _id: { $in: spliArray } })
+        .sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+        if (profile) {
+            res.send(profile)
+
+        } else {
+            res.send("not found")
+        }
+
+    } catch (err) {
+        res.send("server error occured")
+        console.log(err)
+    }
+})
+
+
 
 
 module.exports = router

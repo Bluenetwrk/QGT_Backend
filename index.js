@@ -27,6 +27,10 @@ mongoose.connect(process.env.URL)
 
 app.use(express.json())
 app.use(cors())
+
+// const os=require("os")
+// const cpus=os.cpus().length
+// console.log(cpus)
     // (({
     //     origin: 'http://localhost.com',
     //     methods: ['GET', 'POST', 'PUT', 'DELETE'],
