@@ -200,7 +200,7 @@ router.post("/Glogin", body('email').isEmail(), async (req, res) => {
                 }
             });
             let gtoken = jwt.sign({ id: result._id }, secretKey)
-            res.send({ status: "success", token: gtoken, id: result._id })
+            res.send({ status: "success", token: gtoken, id: result._id , action:"registered"})
         } else {
             let Nowtime = Date()  
             let result = await StudentProfileModel.updateOne(
@@ -208,7 +208,7 @@ router.post("/Glogin", body('email').isEmail(), async (req, res) => {
                {$set: {LogedInTime:Nowtime, Gpicture: Gpicture}}
             )
             let gtoken = jwt.sign({ id: user._id }, secretKey)
-            res.send({ status: "success", token: gtoken, id: user._id })
+            res.send({ status: "success", token: gtoken, id: user._id, action:"login" })
         }
 
     } catch (err) {

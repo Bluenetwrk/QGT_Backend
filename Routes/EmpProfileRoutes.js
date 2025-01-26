@@ -199,7 +199,8 @@ var transporter = nodemailer.createTransport({
     }
   });
   let gtoken = jwt.sign({id:result._id},secretKey)
-            res.send({status : "success" ,token : gtoken ,id: result._id})
+            res.send({status : "success" ,token : gtoken ,id: result._id ,action:"registered"
+                })
         } else {   
             let Nowtime = Date()  
             let result = await EmpProfileModel.updateOne(
@@ -207,7 +208,7 @@ var transporter = nodemailer.createTransport({
                {$set: {LogedInTime:Nowtime}}
             )
             let gtoken = jwt.sign({id:user._id},secretKey)
-            res.send({status : "success" ,token : gtoken ,id: user._id})
+            res.send({status : "success" ,token : gtoken ,id: user._id, action:"login"})
         }
     } catch (err) {
         res.send(err)
