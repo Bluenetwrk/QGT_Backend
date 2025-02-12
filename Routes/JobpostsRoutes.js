@@ -460,8 +460,6 @@ router.get("/jobTagsIds/:id", async (req, res) => {
 
 
 
-
-
 // Archive CheckBox Jobs for admin
 router.delete("/ArchiveCheckBoxArray/:ids", verifyToken, async(req, res)=>{
     let comingIds = req.params.ids.split(",")
