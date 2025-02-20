@@ -5,7 +5,7 @@ const JobpostsModel = require("../Schema/PostJobSchema")
 const CareerJobpostsModel = require("../Schema/CareerJobSchema")
 const JobAppliedModel = require("../Schema/JobAppliedSchema")
 const StudentProfileModel= require("../Schema/StudentProfileSchema")
-const Archived= require("../Schema/ArchiveAchema")
+const Archived= require("../Schema/ArchiveJobsAchema")
 const DeletedBlog= require("../Schema/DeletedBlogSchema")
 var nodemailer = require('nodemailer');
 

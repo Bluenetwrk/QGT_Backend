@@ -2,12 +2,15 @@ const express = require("express");
 const router = express.Router();
 const StudentProfileModel = require("../Schema/StudentProfileSchema")
 const DeletedJobSeeker = require("../Schema/deletedJobSeeker")
+const ArchivedJobSeeker = require("../Schema/ArchivedJobSeeker")
 const bcrypt = require("bcrypt")
 const { body, validationResult } = require("express-validator")
 const jwt = require("jsonwebtoken")
 const secretKey = "abcde";
 var nodemailer = require('nodemailer');
 // const importverifyToken = require('./JobpostsRoutes')
+const Archived= require("../Schema/ArchiveJobsAchema")
+const Deleted= require("../Schema/DeletedJobsSchema")
 const fs = require('fs')
 
 // Middleware
@@ -555,7 +558,7 @@ router.delete("/deleteJobSeeker/:id", async (req, res) => {
 // archived Job seeker for admin
 router.get("/getAllArchivedJobseekers", CheckComp,  async (req, res) => {
     try {
-        let result = await DeletedJobSeeker.find({}, { Archived: 1, _id: 0 })
+        let result = await DeletedJobSeeker.find({}, { Archived: 1, _id: 0,createdAt:1 })
         res.send(result)
     } catch (err) {
         res.send("backend error occured")
@@ -644,6 +647,123 @@ router.get("/getTotalCount", async(req, res)=>{
        res.status(401).send({"result":"server issue"})
     }
 })
+
+router.delete("/ArchiveCheckBoxArray/:ids", verifyToken, async(req, res)=>{
+    let comingIds = req.params.ids.split(",")
+    try{        
+
+        let foundJobs=await StudentProfileModel.find({_id:{$in:comingIds}})
+
+        if (foundJobs.length > 0) {
+            let archiveJobs=foundJobs.map((jobs)=>{
+                return(
+                    jobs
+                )
+            })
+           let insertedValue= await ArchivedJobSeeker.insertMany({Archived:archiveJobs});
+        let deletedJobs=await StudentProfileModel.deleteMany({_id:{$in:comingIds}})
+        }
+res.send("success")
+    }catch(err){
+res.send("fail")
+    }
+})
+
+router.get("/getArchiveJobs", async(req, res)=>{
+    try{
+        let result =await ArchivedJobSeeker.find({}, { Archived: 1, createdAt: 1})
+        res.send(result)
+    }catch(err){
+        console.log("error")
+        res.send("error")
+    }
+})
+
+router.get("/getTagsArchiveJobseekers/:name", async(req, res)=>{
+    let comingParam=req.params.name
+    let convertingArray=comingParam.split(",")
+    // console.log(convertingArray)
+    try{
+        let result = await ArchivedJobSeeker.aggregate([
+            // {$match:{Tags:req.params.name}},
+            {$match:{Tags:{$in:convertingArray}}},
+            { $project: { _id: 1, createdAt: 1 } }
+        ])
+    // console.log(result)
+    res.send(result)
+    }catch(err){
+        res.send("server error")
+        console.log(err)
+    }
+})
+
+
+router.get("/ArchiveJobseekerTagsIds/:id", async (req, res) => {
+    let limitValue = (parseInt(req.query.recordsPerPage))
+    let page = (parseInt(req.query.currentPage))
+    // console.log(page)
+    // console.log(limitValue)
+    let comingArray = req.params.id
+    let spliArray = comingArray.split(",")
+
+    try {
+        // console.log("local value",['6533629f105bb11463d44bb4', '652f76a8eff06fe23539e03d','652f73966749e34e868567e1'])
+        const profile = await ArchivedJobSeeker.find({ _id: { $in: spliArray } })
+        .sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+        if (profile) {
+            res.send(profile)
+    // console.log(profile)
+
+        } else {
+            res.send("not found")
+        }
+
+    } catch (err) {
+        res.send("server error occured")
+        console.log(err)
+    }
+})
+
+//  pagination , get Limited jobs
+router.get("/getLimitArchiveJobseeker/:limit", verifyHomeJobs, async(req, res)=>{
+    let limitValue = (parseInt(req.params.limit))
+    let page = (parseInt(req.query.currentPage))
+    // console.log(page)
+    // console.log(limitValue)
+    try{
+       let result = await ArchivedJobSeeker.find().sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+       res.send(result)
+    }catch(err){
+        res.send("server error")
+    }
+})
+
+router.get("/getTotalCountArchiveJobseeker", async(req, res)=>{
+    try{
+    //    let result =await ArchivedJobSeeker.estimatedDocumentCount()
+       let response = await ArchivedJobSeeker.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalArchivedLength: { $sum: { $size: "$Archived" } }
+          }
+        }
+      ])
+      let result
+     response.map((item)=>{
+        return(
+            result= item.totalArchivedLength
+        )
+     })
+
+       res.status(200).send({"result":result})
+    }catch(err){
+       res.status(401).send({"result":"server issue"})
+       console.log(err)
+
+    }
+})
+
 
 
 

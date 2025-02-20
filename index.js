@@ -14,37 +14,14 @@ const EmployeeProfileModel = require("./Schema/EmpProfileSchema")
 const QuestionRoute=require("./Routes/AskQuestionRoutes")
 
 const port = 8080
-//require("dotenv").config
 const { MongoClient } = require("mongodb")
-// const mongoose = require("mongoose");
-// //const port = process.env.PORT
-// const dotenv =require("dotenv");
-// dotenv.config();
-// mongoose.connect(process.env.URL)
-// // mongoose.connect("mongodb://127.0.0.1:27017/Job-Portal-Database")
-//     .then((res) => { console.log("connected") })
-//     .catch((err) => { console.log("failed") })
+
 const dbconnection=require('./DbConnection')
 dbconnection()
 app.use(express.json())
 app.use(cors())
 
 const fs=require("fs")
-// fs.mkdirSync("../newfolder")
-// fs.writeFileSync("/fff.txt")
-// const content = 'Some content!';
-//      fs.writeFile('test.txt', content);
-
-// const os=require("os")
-// const cpus=os.cpus().length
-// console.log(cpus)
-    // (({
-    //     origin: 'http://localhost.com',
-    //     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    //     allowedHeaders: ['Content-Type', 'X-Custom-Header'],
-    //     credentials: true,
-    //   }))
-
 
 app.use(express.static('public'))
 app.use("/StudentProfile",StudentProfileRoutes)
@@ -56,15 +33,6 @@ app.use("/Careerjobpost", CareerjobpostRoutes)
 app.use("/admin", adminRoutes)
 app.use("/paymentAPI", PaymentRoute)
 
-
-
-// app.use("/", (req, res)=>{
-//     try{
-//     res.send("It-walkin server is up and running")
-// }catch(err){
-//     res.send(" Itwalkin server is down")
-// }
-// })
 
 
 app.use("*", (req, res) => {    // if no API are made 
