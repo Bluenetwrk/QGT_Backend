@@ -389,7 +389,7 @@ router.post("/getBothjobFilter/:id", async(req, res)=>{
 
 
 
-//  pagination , get Limited jobs (never used API)
+//  pagination , get Limited jobs
 router.get("/getLimitJobs/:limit", verifyHomeJobs, async(req, res)=>{
     let limitValue = (parseInt(req.params.limit))
     let page = (parseInt(req.query.currentPage))
@@ -423,7 +423,7 @@ router.get("/getTagsJobs/:name", async(req, res)=>{
             {$match:{Tags:{$in:convertingArray}}},
             { $project: { _id: 1, createdAt: 1 } }
         ])
-    // console.log(result)
+    // console.log("dcdskjcc",result) // will get id's only
     res.send(result)
     }catch(err){
         res.send("server error")
