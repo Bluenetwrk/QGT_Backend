@@ -7,6 +7,7 @@ const StudentProfileModel= require("../Schema/StudentProfileSchema")
 const Archived= require("../Schema/ArchiveJobsAchema")
 const Deleted= require("../Schema/DeletedJobsSchema")
 var nodemailer = require('nodemailer');
+const mongoose = require("mongoose");
 
 const { MongoClient } = require("mongodb")
 // const {getData} = require("../mongodb")
@@ -415,11 +416,10 @@ router.get("/getTotalCount", async(req, res)=>{
 //  get job by Tag filter
 router.get("/getTagsJobs/:name", async(req, res)=>{
     let comingParam=req.params.name
-    let convertingArray=comingParam.split(",")
+    let convertingArray=comingParam.split(",") // ["javascript", "react", "nodejs"]
     // console.log(convertingArray)
     try{
         let result = await JobpostsModel.aggregate([
-            // {$match:{Tags:req.params.name}},
             {$match:{Tags:{$in:convertingArray}}},
             { $project: { _id: 1, createdAt: 1 } }
         ])
@@ -550,5 +550,231 @@ router.get("/getCareerjobs", verifyHomeJobs, async (req, res) => {
     }
 })
 
+//for Archive jobs
 
+router.get("/getTagsArchiveJobseekers/:name", async(req, res)=>{
+    let comingParam=req.params.name
+    let convertingArray=comingParam.split(",") // ["javascript", "react", "nodejs"]
+    // console.log("686",convertingArray)
+    try{
+        const result = await Archived.aggregate([
+            { $unwind: "$Archived" },
+            {$match:{"Archived.Tags":{$in:convertingArray}}},
+            { $project: { _id: 1, "Archived._id": 1, createdAt: 1 } }
+          ]);
+// console.log(result);
+    res.send(result) // only id's will be shared
+    }catch(err){
+        res.send("server error")
+        console.log(err)
+    }
+})
+
+
+router.get("/ArchiveJobseekerTagsIds/:id", async (req, res) => {
+    let limitValue = (parseInt(req.query.recordsPerPage))
+    let page = (parseInt(req.query.currentPage))
+    // console.log(limitValue)
+    let comingArray = req.params.id
+    let spliArray = comingArray.split(",")
+    // console.log(spliArray)
+    let arr=[ "67b5f59ed660de1cc80b6132", "67b60458d660de1cc80b6152" ]
+    
+    try {   
+        const objectIds = spliArray.map(id => new mongoose.Types.ObjectId(id));
+        const profile = await Archived.aggregate([
+            { $unwind: "$Archived" }, // Flatten the Archived array
+            { $match: { "Archived._id": { $in: objectIds } } }, // Match the IDs inside Archived
+        ])   
+        .sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+        if (profile) {
+            res.send(profile)
+    // console.log(profile)
+
+        } else {
+            res.send("not found")
+        }
+
+    } catch (err) {
+        res.send("server error occured")
+        console.log(err)
+    }
+})
+
+//  pagination , get Limited jobs
+router.get("/getLimitArchiveJobseeker/:limit", verifyHomeJobs, async(req, res)=>{
+    let limitValue = (parseInt(req.params.limit))
+    let page = (parseInt(req.query.currentPage))
+    // console.log(page)
+    // console.log(limitValue)
+    try{
+       let result = await Archived.find({}, { Archived: 1, createdAt: 1})
+       
+       .sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+       res.send(result)
+    //    console.log(result)
+    }catch(err){
+        res.send("server error")
+    }
+})
+
+router.get("/getTotalCountArchiveJobseeker", async(req, res)=>{
+    try{
+    //    let result =await Archived.estimatedDocumentCount()
+       let response = await Archived.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalArchivedLength: { $sum: { $size: "$Archived" } }
+          }
+        }
+      ])
+      let result
+     response.map((item)=>{
+        return(
+            result= item.totalArchivedLength
+        )
+     })
+
+       res.status(200).send({"result":result})
+    }catch(err){
+       res.status(401).send({"result":"server issue"})
+       console.log(err)
+
+    }
+})
+
+//get single Archive Jobs
+
+router.get("/getArchivedProfile/:id",  async (req, res) => {
+// console.log(req.params.id)
+    try {
+        let result = await Archived.findOne(
+            { "Archived._id": new mongoose.Types.ObjectId(req.params.id) },
+            { "Archived.$": 1 }
+          );
+        if (result) {
+            res.send( result )
+        }
+        // console.log(result)
+    } catch (err) {
+        res.send("back end error occured")
+console.log(err)
+
+    }
+})
+
+//for Deleted jobs
+
+router.get("/getTagsDeletedJobseekers/:name", async(req, res)=>{
+    let comingParam=req.params.name
+    let convertingArray=comingParam.split(",") // ["javascript", "react", "nodejs"]
+    // console.log("686",convertingArray)
+    try{
+        const result = await Deleted.aggregate([
+            { $unwind: "$Archived" },
+            {$match:{"Archived.Tags":{$in:convertingArray}}},
+            { $project: { _id: 1, "Archived._id": 1, createdAt: 1 } }
+          ]);
+// console.log(result);
+    res.send(result) // only id's will be shared
+    }catch(err){
+        res.send("server error")
+        console.log(err)
+    }
+})
+
+
+router.get("/DeletedJobseekerTagsIds/:id", async (req, res) => {
+    let limitValue = (parseInt(req.query.recordsPerPage))
+    let page = (parseInt(req.query.currentPage))
+    // console.log(limitValue)
+    let comingArray = req.params.id
+    let spliArray = comingArray.split(",")
+    // console.log(spliArray)
+    let arr=[ "67b5f59ed660de1cc80b6132", "67b60458d660de1cc80b6152" ]
+    
+    try {   
+        const objectIds = spliArray.map(id => new mongoose.Types.ObjectId(id));
+        const profile = await Deleted.aggregate([
+            { $unwind: "$Archived" }, // Flatten the Archived array
+            { $match: { "Archived._id": { $in: objectIds } } }, // Match the IDs inside Archived
+        ])   
+        .sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+        if (profile) {
+            res.send(profile)
+    // console.log(profile)
+
+        } else {
+            res.send("not found")
+        }
+
+    } catch (err) {
+        res.send("server error occured")
+        console.log(err)
+    }
+})
+
+//  pagination , get Limited jobs
+router.get("/getLimitDeletedJobseeker/:limit", verifyHomeJobs, async(req, res)=>{
+    let limitValue = (parseInt(req.params.limit))
+    let page = (parseInt(req.query.currentPage))
+    // console.log(page)
+    // console.log(limitValue)
+    try{
+       let result = await Deleted.find({}, { Archived: 1, createdAt: 1})
+       
+       .sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+       res.send(result)
+    }catch(err){
+        res.send("server error")
+    }
+})
+
+router.get("/getTotalCountDeletedJobseeker", async(req, res)=>{
+    try{
+    //    let result =await Archived.estimatedDocumentCount()
+       let response = await Deleted.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalArchivedLength: { $sum: { $size: "$Archived" } }
+          }
+        }
+      ])
+      let result
+     response.map((item)=>{
+        return(
+            result= item.totalArchivedLength
+        )
+     })
+
+       res.status(200).send({"result":result})
+    }catch(err){
+       res.status(401).send({"result":"server issue"})
+       console.log(err)
+
+    }
+})
+
+//get single Archive Jobs
+
+router.get("/getDeletedProfile/:id",  async (req, res) => {
+    // console.log(req.params.id)
+        try {
+            let result = await Deleted.findOne(
+                { "Archived._id": new mongoose.Types.ObjectId(req.params.id) },
+                { "Archived.$": 1 }
+              );
+            if (result) {
+                res.send( result )
+            }
+            // console.log(result)
+        } catch (err) {
+            res.send("back end error occured")
+    console.log(err)
+    
+        }
+    })
+    
 module.exports = router

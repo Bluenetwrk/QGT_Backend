@@ -3,6 +3,7 @@ const router = express.Router();
 const StudentProfileModel = require("../Schema/StudentProfileSchema")
 const DeletedJobSeeker = require("../Schema/deletedJobSeeker")
 const ArchivedJobSeeker = require("../Schema/ArchivedJobSeeker")
+
 const bcrypt = require("bcrypt")
 const { body, validationResult } = require("express-validator")
 const jwt = require("jsonwebtoken")
@@ -568,15 +569,38 @@ router.get("/getAllArchivedJobseekers", CheckComp,  async (req, res) => {
 
 // check archived full profile for admin
 
-router.get("/getArchivedProfile/:id", verifyToken, async (req, res) => {
+router.get("/getDeletedProfile/:id", verifyToken, async (req, res) => {
+
     try {
-        let result = await DeletedJobSeeker.find({}, { Archived: 1, _id: 0 })
+        let result = await DeletedJobSeeker
+        .findOne(
+            { "Archived._id": new mongoose.Types.ObjectId(req.params.id) }
+          );
         if (result) {
             res.send( result )
         }
-
     } catch (err) {
         res.send("back end error occured")
+console.log(err)
+
+    }
+})
+
+router.get("/getArchivedProfile/:id", verifyToken, async (req, res) => {
+
+    try {
+        let result = await ArchivedJobSeeker.findOne(
+            { "Archived._id": new mongoose.Types.ObjectId(req.params.id) },
+            { "Archived.$": 1 }
+          );
+        if (result) {
+            res.send( result )
+        }
+        // console.log(result)
+    } catch (err) {
+        res.send("back end error occured")
+console.log(err)
+
     }
 })
 
@@ -685,17 +709,13 @@ router.get("/getTagsArchiveJobseekers/:name", async(req, res)=>{
     let convertingArray=comingParam.split(",") // ["javascript", "react", "nodejs"]
     // console.log("686",convertingArray)
     try{
-        const response = await ArchivedJobSeeker.aggregate([
-            {
-              $project: {
-                _id: 0, // Exclude the main document _id
-                archivedIds: "$Archived._id" // Extract only _id from Archived array
-              }
-            }
+        const result = await ArchivedJobSeeker.aggregate([
+            { $unwind: "$Archived" },
+            {$match:{"Archived.Tags":{$in:convertingArray}}},
+            { $project: { _id: 1, "Archived._id": 1, createdAt: 1 } }
           ]);
-          const result = response.flatMap(doc => doc.archivedIds.map(id => id.toString()));
 // console.log(result);
-    res.send(result)
+    res.send(result) // only id's will be shared
     }catch(err){
         res.send("server error")
         console.log(err)
@@ -740,7 +760,9 @@ router.get("/getLimitArchiveJobseeker/:limit", verifyHomeJobs, async(req, res)=>
     // console.log(page)
     // console.log(limitValue)
     try{
-       let result = await ArchivedJobSeeker.find().sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+       let result = await ArchivedJobSeeker.find({}, { Archived: 1, createdAt: 1})
+       
+       .sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
        res.send(result)
     }catch(err){
         res.send("server error")
@@ -764,6 +786,7 @@ router.get("/getTotalCountArchiveJobseeker", async(req, res)=>{
             result= item.totalArchivedLength
         )
      })
+    //  console.log(result)
 
        res.status(200).send({"result":result})
     }catch(err){
@@ -773,7 +796,84 @@ router.get("/getTotalCountArchiveJobseeker", async(req, res)=>{
     }
 })
 
+// ... for deleted for Jobseeker
+router.get("/getTotalCountDeletedJobSeeker", async(req, res)=>{
+    try{
+    //    let result =await ArchivedJobSeeker.estimatedDocumentCount()
+    let result =await DeletedJobSeeker.estimatedDocumentCount()
+    //    console.log(result)
+       res.status(200).send({"result":result})
+    }catch(err){
+       res.status(401).send({"result":"server issue"})
+       console.log(err)
 
+    }
+})
+
+//  pagination , get Limited jobs
+router.get("/getLimitDeletedJobseeker/:limit", verifyHomeJobs, async(req, res)=>{
+    let limitValue = (parseInt(req.params.limit))
+    let page = (parseInt(req.query.currentPage))
+    // console.log(limitValue)
+    try{
+       let result = await DeletedJobSeeker.find({}, { Archived: 1, createdAt: 1})
+       
+       .sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+    //    console.log(result)
+       res.send(result)
+    }catch(err){
+        res.send("server error")
+    }
+})
+
+
+router.get("/getTagsDeletedJobSeeker/:name", async(req, res)=>{
+    let comingParam=req.params.name
+    let convertingArray=comingParam.split(",") // ["javascript", "react", "nodejs"]
+    // console.log("686",convertingArray)
+    try{
+        const result = await DeletedJobSeeker.aggregate([
+            {$match:{"Archived.Tags":{$in:convertingArray}}},
+            { $project: { _id: 1, "Archived._id": 1, createdAt: 1 } }
+          ]);
+// console.log("816",result);
+    res.send(result) // only id's will be shared
+    }catch(err){
+        res.send("server error")
+        console.log(err)
+    }
+})
+
+
+router.get("/DeletedJobSeekerTagsIds/:id", async (req, res) => {
+    let limitValue = (parseInt(req.query.recordsPerPage))
+    let page = (parseInt(req.query.currentPage))
+    // console.log(limitValue)
+    let comingArray = req.params.id
+    let spliArray = comingArray.split(",")
+    // console.log(spliArray)
+    let arr=[ "67b5f59ed660de1cc80b6132", "67b60458d660de1cc80b6152" ]
+    
+    try {   
+        const objectIds = spliArray.map(id => new mongoose.Types.ObjectId(id));
+        const profile = await DeletedJobSeeker.aggregate([
+            { $unwind: "$Archived" }, // Flatten the Archived array
+            { $match: { "Archived._id": { $in: objectIds } } }, // Match the IDs inside Archived
+        ])   
+        .sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+        if (profile) {
+            res.send(profile)
+    // console.log("843",profile)
+
+        } else {
+            res.send("not found")
+        }
+
+    } catch (err) {
+        res.send("server error occured")
+        console.log(err)
+    }
+})
 
 
 module.exports = router

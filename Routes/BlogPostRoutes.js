@@ -8,6 +8,7 @@ const StudentProfileModel= require("../Schema/StudentProfileSchema")
 const Archived= require("../Schema/ArchiveJobsAchema")
 const DeletedBlog= require("../Schema/DeletedBlogSchema")
 var nodemailer = require('nodemailer');
+const mongoose = require("mongoose");
 
 const { MongoClient } = require("mongodb")
 // const {getData} = require("../mongodb")
@@ -199,6 +200,122 @@ router.get("/getDeletedJobs", async(req, res)=>{
         res.send("error")
     }
 })
+
+//for Deleted jobs
+
+router.get("/getTagsDeletedBlogs/:name", async(req, res)=>{
+    let comingParam=req.params.name
+    let convertingArray=comingParam.split(",") // ["javascript", "react", "nodejs"]
+    // console.log("686",convertingArray)
+    try{
+        const result = await DeletedBlog.aggregate([
+            { $unwind: "$Archived" },
+            {$match:{"Archived.Tags":{$in:convertingArray}}},
+            { $project: { _id: 1, "Archived._id": 1, createdAt: 1 } }
+          ]);
+// console.log(result);
+    res.send(result) // only id's will be shared
+    }catch(err){
+        res.send("server error")
+        console.log(err)
+    }
+})
+
+
+router.get("/DeletedBlogsTagsIds/:id", async (req, res) => {
+    let limitValue = (parseInt(req.query.recordsPerPage))
+    let page = (parseInt(req.query.currentPage))
+    // console.log(limitValue)
+    let comingArray = req.params.id
+    let spliArray = comingArray.split(",")
+    // console.log(spliArray)
+    let arr=[ "67b5f59ed660de1cc80b6132", "67b60458d660de1cc80b6152" ]
+    
+    try {   
+        const objectIds = spliArray.map(id => new mongoose.Types.ObjectId(id));
+        const profile = await DeletedBlog.aggregate([
+            { $unwind: "$Archived" }, // Flatten the Archived array
+            { $match: { "Archived._id": { $in: objectIds } } }, // Match the IDs inside Archived
+        ])   
+        .sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+        if (profile) {
+            res.send(profile)
+    // console.log(profile)
+
+        } else {
+            res.send("not found")
+        }
+
+    } catch (err) {
+        res.send("server error occured")
+        console.log(err)
+    }
+})
+
+//  pagination , get Limited jobs
+router.get("/getLimitDeletedBlogs/:limit",  async(req, res)=>{
+    let limitValue = (parseInt(req.params.limit))
+    let page = (parseInt(req.query.currentPage))
+    // console.log(page)
+    // console.log(limitValue)
+    try{
+       let result = await DeletedBlog.find({}, { Archived: 1, createdAt: 1})
+       
+       .sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+       res.send(result)
+    // console.log("266",result)
+
+    }catch(err){
+        res.send("server error")
+    }
+})
+
+router.get("/getTotalCountDeletedJobseeker", async(req, res)=>{
+    try{
+    //    let result =await Archived.estimatedDocumentCount()
+    let response = await DeletedBlog.aggregate([
+        {
+          $group: {
+            _id: null,
+            totalArchivedLength: { $sum: { $size: "$Archived" } }
+          }
+        }
+      ])
+    //   console.log(response)
+      let result
+     response.map((item)=>{
+        return(
+            result= item.totalArchivedLength
+        )
+     })
+      
+    //   console.log(result);
+       res.status(200).send({"result":result})
+    }catch(err){
+       res.status(401).send({"result":"server issue"})
+    //    console.log("294",err)
+
+    }
+})
+
+//get single Archive Jobs
+
+router.get("/getDeletedBlogProfile/:id",  async (req, res) => {
+    // console.log(req.params.id)
+        try {
+            let result = await DeletedBlog.findOne(
+                { "Archived._id": new mongoose.Types.ObjectId(req.params.id) },
+                { "Archived.$": 1 }
+              );
+            if (result) {
+                res.send( result )
+            }
+        } catch (err) {
+            res.send("back end error occured")
+    console.log(err)
+    
+        }
+    })
 
 
 // Delete any field
