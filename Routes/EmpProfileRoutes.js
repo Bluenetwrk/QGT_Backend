@@ -555,6 +555,76 @@ router.get("/checkOnline", verifyToken, async (req, res) => {
 })
 
 
+
+router.get("/getTagsJobs/:name", async(req, res)=>{
+    let comingParam=req.params.name
+    let convertingArray=comingParam.split(",")
+    // console.log(convertingArray)
+    try{
+        let result = await EmpProfileModel.aggregate([
+            // {$match:{Tags:req.params.name}},
+            {$match:{Tags:{$in:convertingArray}}},
+            { $project: { _id: 1, createdAt: 1 } }
+        ])
+    // console.log(result)
+    res.send(result)
+    }catch(err){
+        res.send("server error")
+        console.log(err)
+    }
+})
+
+router.get("/jobTagsIds/:id", async (req, res) => {
+    let limitValue = (parseInt(req.query.recordsPerPage))
+    let page = (parseInt(req.query.currentPage))
+    // console.log(page)
+    // console.log(limitValue)
+    let comingArray = req.params.id
+    let spliArray = comingArray.split(",")
+
+    try {
+        // console.log("local value",['6533629f105bb11463d44bb4', '652f76a8eff06fe23539e03d','652f73966749e34e868567e1'])
+        const profile = await EmpProfileModel.find({ _id: { $in: spliArray } })
+        .sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+        if (profile) {
+            res.send(profile)
+    // console.log(profile)
+
+        } else {
+            res.send("not found")
+        }
+
+    } catch (err) {
+        res.send("server error occured")
+        console.log(err)
+    }
+})
+
+//  pagination , get Limited jobs (never used API)
+router.get("/getLimitJobs/:limit", verifyHomeJobs, async(req, res)=>{
+
+    let limitValue = (parseInt(req.params.limit))
+    let page = (parseInt(req.query.currentPage))
+    // console.log(page)
+    // console.log(limitValue)
+    try{
+       let result = await EmpProfileModel.find()
+       .sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+       res.send(result)
+    }catch(err){
+        res.send("server error")
+    }
+})
+
+router.get("/getTotalCount", async(req, res)=>{
+    try{
+       let result =await EmpProfileModel.estimatedDocumentCount()
+       res.status(200).send({"result":result})
+    }catch(err){
+       res.status(401).send({"result":"server issue"})
+    }
+})
+
 // ................................Login with password.........................
 
 
