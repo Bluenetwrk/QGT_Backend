@@ -317,6 +317,25 @@ router.get("/getDeletedBlogProfile/:id",  async (req, res) => {
         }
     })
 
+    router.delete("/deleteDeleteddBlogs/:ids", async (req, res) => {
+        // console.log("called")
+        try {
+    // let comingIds = req.params.ids.split(",") //2
+    let comingId = req.params.ids.split(",") //2
+    let comingIds = comingId.map(id => new mongoose.Types.ObjectId(id));
+// console.log(comingIds)
+          const result = await DeletedBlog.updateMany(
+            { "Archived._id": { $in: comingIds } }, // Find any document where Archived contains these IDs
+            { $pull: { Archived: { _id: { $in: comingIds } } } } // Remove matching objects from Archived
+          );
+          const tabledeleted = await DeletedBlog.deleteMany({ Archived: { $size: 0 } });
+// console.log(tabledeleted)
+          res.status(200).json({ message: "Archived items deleted successfully", result });
+        } catch (error) {
+          res.status(500).json({ error: "Error deleting archived items" });
+        }
+      });
+
 
 // Delete any field
 

@@ -776,5 +776,43 @@ router.get("/getDeletedProfile/:id",  async (req, res) => {
     
         }
     })
+
+    router.delete("/deleteArchivedJobs/:ids", async (req, res) => {
+        // console.log("called")
+        try {
+    // let comingIds = req.params.ids.split(",") //2
+    let comingId = req.params.ids.split(",") //2
+    let comingIds = comingId.map(id => new mongoose.Types.ObjectId(id));
+// console.log(comingIds)
+          const result = await Archived.updateMany(
+            { "Archived._id": { $in: comingIds } }, // Find any document where Archived contains these IDs
+            { $pull: { Archived: { _id: { $in: comingIds } } } } // Remove matching objects from Archived
+          );
+          const tabledeleted = await Archived.deleteMany({ Archived: { $size: 0 } });
+      
+          res.status(200).json({ message: "Archived items deleted successfully", result });
+        } catch (error) {
+          res.status(500).json({ error: "Error deleting archived items" });
+        }
+      });
+
+      router.delete("/deleteDeleteddJobs/:ids", async (req, res) => {
+        // console.log("called")
+        try {
+    // let comingIds = req.params.ids.split(",") //2
+    let comingId = req.params.ids.split(",") //2
+    let comingIds = comingId.map(id => new mongoose.Types.ObjectId(id));
+// console.log(comingIds)
+          const result = await Deleted.updateMany(
+            { "Archived._id": { $in: comingIds } }, // Find any document where Archived contains these IDs
+            { $pull: { Archived: { _id: { $in: comingIds } } } } // Remove matching objects from Archived
+          );
+          const tabledeleted = await Deleted.deleteMany({ Archived: { $size: 0 } });
+          res.status(200).json({ message: "Archived items deleted successfully", result });
+        } catch (error) {
+          res.status(500).json({ error: "Error deleting archived items" });
+        }
+      });
+            
     
 module.exports = router

@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const router = express.Router();
 const EmpProfileModel= require("../Schema/EmpProfileSchema")
+const ArchiveEmployee= require("../Schema/ArchivedEmployee")
 const NewEmpProfileRegistrationModel= require("../Schema/EmpNewRegistSchema")
 const bcrypt = require("bcrypt")
 const { body, validationResult } = require("express-validator")
@@ -625,7 +626,29 @@ router.get("/getTotalCount", async(req, res)=>{
     }
 })
 
-// ................................Login with password.........................
+router.delete("/ArchiveCheckBoxArray/:ids", verifyToken, async(req, res)=>{
+    let comingIds = req.params.ids.split(",")
+    // console.log(comingIds)
+    try{        
+
+        let foundJobs=await EmpProfileModel.find({_id:{$in:comingIds}})
+
+        if (foundJobs.length > 0) {
+            let archiveJobs=foundJobs.map((jobs)=>{
+                return(
+                    jobs
+                )
+            })
+           let insertedValue= await ArchiveEmployee.insertMany({Archived:archiveJobs});
+        let deletedJobs=await EmpProfileModel.deleteMany({_id:{$in:comingIds}})
+        }
+res.send("success")
+    }catch(err){
+res.send("fail")
+    }
+})
+
 
 
 module.exports = router
+// ................................Login with password.........................
