@@ -85,6 +85,29 @@ router.get("/getAllAdmin", async(req, res)=>{
     }
 })
 
+router.delete("/deleteAdmin/:id",verifyToken, async (req, res) => {
+    let result = await AdminModel.deleteOne({ _id: req.params.id })
+    if (result) {
+        res.send(result)
+        // console.log(result)
+    } else {
+        res.send("error")
+    }
+})
+router.put("/giveAccess/:id", async (req, res) => {
+    try {
+      const userId = req.params.id;
+      const updatedUser = await AdminModel.findByIdAndUpdate(
+        userId,
+        { $set: req.body }    
+      );  
+      res.json({ message: "User updated successfully", user: updatedUser });
+    } catch (error) {
+      res.status(500).json({ message: "Internal Server Error", error: error.message });
+    }
+  });
+
+
 router.put("/UpdateWebsite", async(req, res)=>{
     // console.log(req.body)
     try{
