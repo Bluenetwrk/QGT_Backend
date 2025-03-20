@@ -16,14 +16,15 @@ const QuestionRoute=require("./Routes/AskQuestionRoutes")
 const port = 8080
 const { MongoClient } = require("mongodb")
 
-const dbconnection=require('./DbConnection')
-dbconnection()
+// dbconnection()
 app.use(express.json())
 app.use(cors())
 
 const fs=require("fs")
-
 app.use(express.static('public'))
+
+const dbconnection=require('./DbConnection')
+app.use("/db",dbconnection)
 app.use("/StudentProfile",StudentProfileRoutes)
 app.use("/EmpProfile",EmpProfileRoutes)
 app.use("/jobpost", jobpostRoutes)
