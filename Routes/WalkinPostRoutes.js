@@ -77,6 +77,16 @@ router.get("/getHomewalkins", verifyHomeJobs, async (req, res) => {
         res.status(401).send("server issue")
     }
 })
+//......get all active walkins......
+router.get("/allactivewalkins", verifyHomeJobs, async (req,res) => {
+    try { 
+        const currentDate = new Date();
+        let jobs = await walkinpostsModel.find({driveDate: {$gte : currentDate}})
+        res.send(jobs)
+    } catch (err) {
+        res.status(401).send("server issue")
+    }
+    })
 // ............get all H jobs for all posted by admin for admin my posted jobs......
 router.get("/getAdminwalkins", verifyHomeJobs, async (req, res) => {
     try {
@@ -92,8 +102,8 @@ router.get("/getAdminwalkins", verifyHomeJobs, async (req, res) => {
 router.post("/walkinpost", verifyToken, async (req, res) => {
     try {
         const {Logo, empId, companyName, jobTitle, jobDescription, jobtype, 
-            salaryRange, jobLocation, qualification, experiance, skills, venue, time } = (req.body)
-        if ( !jobDescription || !companyName || !experiance || !jobLocation || !venue || !time) {
+            salaryRange, jobLocation, qualification, experiance, skills, driveDate, venue, time } = (req.body)
+        if ( !jobDescription || !companyName || !experiance || !jobLocation ||!driveDate || !venue || !time) {
             res.send("fields are missing")
         } else {
             let jobs = new walkinpostsModel(req.body)
