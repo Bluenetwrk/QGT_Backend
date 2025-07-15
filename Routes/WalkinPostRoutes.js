@@ -1,5 +1,8 @@
 const express = require("express")
 const router = express.Router()
+const JobpostsModel = require("../Schema/PostJobSchema")
+// const CareerJobpostsModel = require("../Schema/CareerJobSchema")
+// const JobAppliedModel = require("../Schema/JobAppliedSchema")
 const walkinpostsModel = require("../Schema/PostWalkinDriveSchema")
 // const CareerJobpostsModel = require("../Schema/CareerJobSchema")
 const WalkinAppliedModel = require("../Schema/WalkinAppliedschema")
@@ -37,6 +40,16 @@ function verifyToken(req, res, next){
 }
 }
 
+// function verifyHomeJobs(req, res, next){
+//     let valid=req.headers['authorization']
+//     if(valid==='BlueItImpulseWalkinIn'){
+//         next()
+// }else{
+//     res.send("Unauthorised Access")
+// }
+// }
+
+// employee job postings
 
 // ............get all jobs for all......
 router.get("/getwalkins", verifyToken, async (req, res) => {
@@ -47,7 +60,6 @@ router.get("/getwalkins", verifyToken, async (req, res) => {
         res.status(401).send("server issue")
     }
 })
-
 function verifyHomeJobs(req, res, next){
     let valid=req.headers['authorization']
     if(valid==='BlueItImpulseWalkinIn'){
@@ -76,6 +88,7 @@ router.get("/getAdminwalkins", verifyHomeJobs, async (req, res) => {
 })
 
 // employee job postings
+
 router.post("/walkinpost", verifyToken, async (req, res) => {
     try {
         const {Logo, empId, companyName, jobTitle, jobDescription, jobtype, 
@@ -93,6 +106,24 @@ router.post("/walkinpost", verifyToken, async (req, res) => {
     }
 })
 
+// ............get all Home jobs for all......
+// router.get("/getHomewalkins", verifyHomeJobs, async (req, res) => {
+//     try {
+//         let jobs = await walkinpostsModel.find().select()
+//         res.send(jobs)
+//     } catch (err) {
+//         res.status(401).send("server issue")
+//     }
+// })
+// ............get all H jobs for all posted by admin for admin my posted jobs......
+// router.get("/getAdminwalkins", verifyHomeJobs, async (req, res) => {
+//     try {
+//         let result = await walkinpostsModel.aggregate([{ $match: { Adminpost: true } }])
+//         res.send(result)
+//     } catch (err) {
+//         res.status(401).send("server issue")
+//     }
+// })
 
 // .........getJobs for job details...........
 router.get("/getwalkins/:id",verifyHomeJobs, async (req, res) => {
@@ -137,7 +168,7 @@ router.put("/updatPostedwalkin/:id", verifyHomeJobs, async (req, res) => {
     }
 })
 // ...........delete posted job for employee..............
-router.delete("/deletewalkin/:id",verifyHomeJobs, async (req, res) => {
+router.delete("/deletewalkin/:id", async (req, res) => {
     let result = await walkinpostsModel.deleteOne({ _id: req.params.id })
     if (result) {
         res.send(result)
@@ -315,14 +346,14 @@ router.put("/deleteDescription", async(req, res)=>{
 })
 
 // ....delete job for admin....
-router.delete("/deleteWalkin/:id", async (req, res) => {
-    let result = await walkinpostsModel.deleteOne({ _id: req.params.id })
-    if (result) {
-        res.send(result)
-    } else {
-        res.send("error")
-    }
-})
+// router.delete("/deleteWalkin/:id", async (req, res) => {
+//     let result = await walkinpostsModel.deleteOne({ _id: req.params.id })
+//     if (result) {
+//         res.send(result)
+//     } else {
+//         res.send("error")
+//     }
+// })
 
 // today Posted Jobs
 var start = new Date();  

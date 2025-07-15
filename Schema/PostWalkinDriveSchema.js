@@ -5,7 +5,7 @@ const walkindriveSchema = new mongoose.Schema({
     type :String
 
     },
-jobtitle:{
+jobTitle:{
     type :String
 },
 companyName:{
