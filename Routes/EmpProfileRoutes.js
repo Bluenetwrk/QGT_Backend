@@ -3,7 +3,6 @@ const app = express();
 const router = express.Router();
 const EmpProfileModel= require("../Schema/EmpProfileSchema")
 const ArchiveEmployee= require("../Schema/ArchivedEmployee")
-const walkinpostsModel = require("../Schema/PostWalkinDriveSchema")
 const NewEmpProfileRegistrationModel= require("../Schema/EmpNewRegistSchema")
 const bcrypt = require("bcrypt")
 const { body, validationResult } = require("express-validator")
@@ -425,7 +424,8 @@ router.get("/getApprovedEmp", verifyToken, async(req, res)=>{
     }
 })
 // find all which are not Approved Employeers for admin
- router.get("/getNotApprovedEmp", verifyToken, async(req, res)=>{
+
+router.get("/getNotApprovedEmp", verifyToken, async(req, res)=>{
     try{
         let result = await EmpProfileModel.aggregate([{$match : { isApproved : false }}])
         if(result){

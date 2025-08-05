@@ -51,7 +51,7 @@ function verifyHomeJobs(req, res, next){
 }
 
 // employee Blog  postings
-router.post("/questionPost", verifyToken, async (req, res) => {
+router.post("/postQuestion", verifyToken, async (req, res) => {
     try {
             let jobs = new AskQuestionModel(req.body)
             let result = await jobs.save()
@@ -63,9 +63,9 @@ router.post("/questionPost", verifyToken, async (req, res) => {
 })
 
 // ............get all Home jobs for all......
-router.get("/getAllBlogs",  async (req, res) => {
+router.get("/getAllQuestions",verifyToken, async (req, res) => {
     try {
-        let jobs = await BlogModel.find().select()
+        let jobs = await AskQuestionModel.find().select()
         res.send(jobs)
     } catch (err) {
         res.status(401).send("server issue")
@@ -73,9 +73,9 @@ router.get("/getAllBlogs",  async (req, res) => {
 })
 
 //  get job by Tag filter
-router.get("/getTagsJobs/:name", async(req, res)=>{
+router.get("/getTagsQuestions/:name", async(req, res)=>{
     try{
-        let result = await BlogModel.aggregate([{$match:{Tags:req.params.name}}]) 
+        let result = await AskQuestionModel.aggregate([{$match:{Tags:req.params.name}}]) 
         //or
     // let result = await JobpostsModel.find({Tags:  req.params.name })
     // let result = await JobpostsModel.find({Tags: {$elemMatch: {value: req.params.name }}}) //this one if for object in array in db
@@ -86,14 +86,36 @@ router.get("/getTagsJobs/:name", async(req, res)=>{
 })
 
 // .........getJobs for job details...........
-router.get("/getjobs/:id",verifyHomeJobs, async (req, res) => {
+router.get("/getQuestions/:id",verifyToken, async (req, res) => {
     try {
-        let jobs = await BlogModel.findOne({ _id: req.params.id })
+        let jobs = await AskQuestionModel.findOne({ _id: req.params.id })
         res.send(jobs)
     } catch (err) {
         res.status(401).send("server issue")
     }
 })
-
+// ..........update Question............
+router.put("/updateQuestion/:id", verifyHomeJobs, async (req, res) => {
+    try {
+        let result = await AskQuestionModel.updateOne(
+           { _id: req.params.id},
+           {$set:req.body}
+         )
+        if (result) {
+            res.send("success")
+        }         
+    } catch (err) {
+        res.send("back end error occured")
+    }
+})
+//............delete posted Questions.........
+router.delete("/deleteQuestion/:id",verifyHomeJobs, async (req, res) => {
+    let result = await AskQuestionModel.deleteOne({ _id: req.params.id })
+    if (result) {
+        res.send(result)
+    } else {
+        res.send("error")
+    }
+})
 
 module.exports=router

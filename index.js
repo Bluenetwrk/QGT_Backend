@@ -42,7 +42,7 @@ app.use("*", (req, res) => {    // if no API are made
 
 
 const http = require("http")
-const Server=require('socket.io').Server
+const Server = require('socket.io').Server
 const server = http.createServer(app)
 
 
