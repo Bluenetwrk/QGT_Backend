@@ -12,7 +12,7 @@ const profileSchema= new mongoose.Schema({
         unique: true
     },
     ipAddress:{
-type:String
+        type:String
     },
     message:{
         type:String

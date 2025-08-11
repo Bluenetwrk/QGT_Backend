@@ -20,6 +20,9 @@ Source:{
 SourceCompanyLink:{
     type : String
 },
+companyHomeLink:{
+    type : String
+},
 Adminpost:{
     type:Boolean
 },

@@ -91,6 +91,15 @@ message:{
     },
     Tags:[
         
+    ],
+    tokenNo:[{
+        tokenNo:{
+        type:Number
+    },
+        Date:{
+            type : Date
+        }    
+    }
     ]
 },
 {timestamps:true})

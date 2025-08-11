@@ -1,9 +1,15 @@
 const { default: mongoose } = require("mongoose")
 
 const QRScannerSchema = new mongoose.Schema({
-    tokenNo:{
+    tokenNo:[{
+        tokenNo:{
         type:Number
     },
+        Date:{
+            type : Date
+        }    
+    }
+    ],
     profile_data:{
         type: String
     },

@@ -12,6 +12,6 @@ const userSchema = new mongoose.Schema({
 },
 {timestamps:true}
 );
-const WalkinAppliedModel = mongoose.model("Walkin-Applied", userSchema);
+const WalkinAppliedModel = mongoose.model("Walkins-Applied", userSchema);
 
 module.exports = WalkinAppliedModel

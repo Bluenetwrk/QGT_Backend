@@ -9,6 +9,7 @@ const Deleted= require("../Schema/DeletedJobsSchema")
 var nodemailer = require('nodemailer');
 const mongoose = require("mongoose");
 
+
 const { MongoClient } = require("mongodb")
 // const {getData} = require("../mongodb")
 const {ObjectID} = require("mongodb")
@@ -78,7 +79,7 @@ router.get("/getAdminjobs", verifyHomeJobs, async (req, res) => {
 // employee job postings
 router.post("/jobpost", verifyToken, async (req, res) => {
     try {
-        const {Logo, empId, companyName, jobTitle, jobDescription, jobtype, 
+        const {Logo, empId, companyName, jobTitle, jobDescription, jobtype,SourceLink,Source,SourceCompanyLink,companyHomeLink,Adminpost,adminLogin,jobSeekerId,
             salaryRange, jobLocation, qualification, experiance, skills } = (req.body)
         if ( !jobDescription || !companyName || !experiance || !jobLocation) {
             res.send("field are missing")

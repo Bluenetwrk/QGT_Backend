@@ -29,6 +29,9 @@ Adminpost:{
 empId:{
 type : String
 },
+Designation:{
+    type: String
+},
 adminLogin:{
     type : String
 },
@@ -37,6 +40,9 @@ jobDescription:{
 },
 jobtype:{
     type : String
+},
+editedDate:{
+    type:Date
 },
 salaryRange:{
     type : String

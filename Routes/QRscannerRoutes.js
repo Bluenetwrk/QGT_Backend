@@ -59,7 +59,7 @@ router.post("/scanQRcode",verifyToken, async (req, res) => {
 })
 
 // ............get all Home jobs for all......
-router.get("/getAllQRcodes", async (req, res) => {
+router.get("/getAllTokens", async (req, res) => {
     try {
         let jobs = await QRscannermodel.find().select()
         res.send(jobs)
@@ -69,7 +69,7 @@ router.get("/getAllQRcodes", async (req, res) => {
 })
 
 //  get job by Tag filter
-router.get("/getTagsQRcodes/:name", async(req, res)=>{
+router.get("/getTagsTokens/:name", async(req, res)=>{
     try{
         let result = await QRscannermodel.aggregate([{$match:{Tags:req.params.name}}]) 
         //or
@@ -82,7 +82,7 @@ router.get("/getTagsQRcodes/:name", async(req, res)=>{
 })
 
 // ................get my posted Articls and questions for emplyee amd jobseeker.......
-router.get("/getscanedQRcodes/:id", verifyToken, async (req, res) => {
+router.get("/getTokens/:id", verifyToken, async (req, res) => {
     try {
         let jobs = await QRscannermodel.find({ token: req.params.id })
         res.send(jobs)
@@ -92,7 +92,7 @@ router.get("/getscanedQRcodes/:id", verifyToken, async (req, res) => {
 })
 
 // .......... get jobs for update for emplyee........
-router.get("/getQRcodeForUpdate/:id",verifyToken, async (req, res) => {
+router.get("/getTokenForUpdate/:id",verifyToken, async (req, res) => {
     try {
         let jobs = await QRscannermodel.findOne({ _id: req.params.id })
         res.send(jobs)
@@ -101,7 +101,7 @@ router.get("/getQRcodeForUpdate/:id",verifyToken, async (req, res) => {
     }
 })
 // ..........update for emplyee job posts............
-router.put("/updateQRcode/:id", verifyToken, async (req, res) => {
+router.put("/updateToken/:id", verifyToken, async (req, res) => {
     try {
         let result = await QRscannermodel.updateOne(
            { _id: req.params.id},
@@ -116,7 +116,7 @@ router.put("/updateQRcode/:id", verifyToken, async (req, res) => {
 })
 
 // ...........delete posted job for employee..............
-router.delete("/deleteQRcode/:id",verifyToken, async (req, res) => {
+router.delete("/deleteToken/:id",verifyToken, async (req, res) => {
     let result = await QRscannermodel.deleteOne({ _id: req.params.id })
     if (result) {
         res.send(result)
@@ -126,7 +126,7 @@ router.delete("/deleteQRcode/:id",verifyToken, async (req, res) => {
 })
 
 // .........getJobs for job details...........
-router.get("/getQRdetails/:id",verifyHome, async (req, res) => {
+router.get("/getTokenDetails/:id",verifyHome, async (req, res) => {
     try {
         let jobs = await QRscannermodel.findOne({ _id: req.params.id })
         res.send(jobs)
@@ -148,7 +148,7 @@ router.put("/Addcomment/:id", verifyHome, async(req, res)=>{
         res.send("back error occured")
     }
 })
-router.put("/deletComment/:id", verifyHome, async(req, res)=>{
+router.put("/deleteComment/:id", verifyHome, async(req, res)=>{
     // console.log(req.body)
     try{
         let result= await QRscannermodel.updateOne(

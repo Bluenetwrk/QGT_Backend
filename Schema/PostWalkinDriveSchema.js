@@ -53,7 +53,10 @@ skills:[
  venue:{
     type : String
  },
- time:{
+ StartTime:{
+    type:String
+ },
+ EndTime:{
     type:String
  },
  consent:{
