@@ -1,11 +1,11 @@
 const mongoose = require("mongoose")
 
-const walkindriveSchema = new mongoose.Schema({
+const walkinSchema = new mongoose.Schema({
     Logo:{
     type :String
 
     },
-jobtitle:{
+jobTitle:{
     type :String
 },
 companyName:{
@@ -62,7 +62,7 @@ skills:[
  consent:{
     type: Boolean
  },
-jobSeekerId:[
+ jobSeekerId:[
     {
         jobSeekerId:{
     type : String
@@ -71,20 +71,44 @@ jobSeekerId:[
         type: Date
     }
     },
-    {
-}
-    
  ] ,
-slectedJobseker:[
-],
-rejectedJobseker:[
-],
-onHoldJobseker:[
-]
-
+ WaitingArea:[{
+    jobSeekerId:[
+        {
+            jobSeekerId:{
+        type : String
+            },
+            date:{
+            type: Date
+        }
+        },
+     ] ,
+     tokenNo:[
+    ]
+    }],
+    HRCabin:[{
+        jobSeekerId:[
+            {
+                jobSeekerId:{
+            type : String
+                },
+                date:{
+                type: Date
+            }
+            }, 
+         ] ,
+         tokenNo:[
+        ],
+        selectedJobseeker:[
+        ],
+        rejectedJobseeker:[
+        ],
+        onHoldJobseeker:[
+        ]
+        }]
 },
 
 {timestamps:true}
 )
-const walkindriveModel = mongoose.model("WalkinDrives" , walkindriveSchema)
-module.exports = walkindriveModel
+const walkinModel = mongoose.model("WalkinDrives" , walkinSchema)
+module.exports = walkinModel

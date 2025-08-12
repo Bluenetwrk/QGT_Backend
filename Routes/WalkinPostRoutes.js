@@ -3,7 +3,7 @@ const router = express.Router()
 const JobpostsModel = require("../Schema/PostJobSchema")
 // const CareerJobpostsModel = require("../Schema/CareerJobSchema")
 // const JobAppliedModel = require("../Schema/JobAppliedSchema")
-const walkinpostsModel = require("../Schema/PostWalkinDriveSchema")
+const walkinpostsModel = require("../Schema/PostWalkinSchema")
 // const CareerJobpostsModel = require("../Schema/CareerJobSchema")
 const WalkinAppliedModel = require("../Schema/WalkinAppliedschema")
 const StudentProfileModel= require("../Schema/StudentProfileSchema")
@@ -136,7 +136,7 @@ router.post("/walkinpost", verifyToken, async (req, res) => {
 // })
 
 // .........getJobs for job details...........
-router.get("/getwalkins/:id",verifyHomeJobs, async (req, res) => {
+router.get("/walkindetails/:id",verifyHomeJobs, async (req, res) => {
     try {
         let jobs = await walkinpostsModel.findOne({ _id: req.params.id })
         res.send(jobs)
@@ -239,7 +239,7 @@ router.put("/updatforwalkinApply/:id", verifyToken, async (req, res) => {
                 to: Usermail,
                 subject: `Succesfully Registered for the Walkin ${JobTitle}`,
                 text: "you have registered for walkin successfully",
-                html: `You have Succesfully Registered for the Walkin ${JobTitle}`+'<p>Click <a href="https://www.itwalkin.com/Walkindetails/' + btoa(req.params.id) + '"> here </a> to check the full details about the registered walkin</p>'
+                html: `You have Succesfully Registered for the Walkin ${JobTitle}`+'<p>Click <a href="https://www.itwalkin.com/walkindetails/' + btoa(req.params.id) + '"> here </a> to check the full details about the registered walkin</p>'
                 // context:paymentResult
               };
               
@@ -263,7 +263,7 @@ router.put("/updatforwalkinApply/:id", verifyToken, async (req, res) => {
 router.get("/getMyAppliedwalkin/:id", verifyToken, async (req, res) => {
     try {
         // let jobs = await JobpostsModel.find({jobSeekerId: req.params.id })
-    let jobs = await walkinpostsModel.find({jobSeekerId: {$elemMatch: {jobSeekerId: req.params.id }}})
+    let jobs = await WalkinAppliedModel.find({jobSeekerId: {$elemMatch: {jobSeekerId: req.params.id }}})
 
         res.send(jobs)
     } catch (err) {

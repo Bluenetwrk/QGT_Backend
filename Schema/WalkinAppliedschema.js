@@ -8,7 +8,7 @@ const userSchema = new mongoose.Schema({
         type: String,
 
     },
-    
+    tokenNo:[]
 },
 {timestamps:true}
 );

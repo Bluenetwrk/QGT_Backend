@@ -28,17 +28,7 @@ const QRScannerSchema = new mongoose.Schema({
             type: Date
         }
         },
-        {
-    }
-        
-     ] ,
-    slectedJobseker:[
-    ],
-    rejectedJobseker:[
-    ],
-    onHoldJobseker:[
-    ]
-    
+       ] 
     },
     
     {timestamps:true}
