@@ -10,7 +10,10 @@ const QRScannerSchema = new mongoose.Schema({
         }    
     }
     ],
-    profile_data:{
+    job_id:[{
+
+    }],
+    profileData:{
         type: String
     },
     createdDateTime:{

@@ -48,14 +48,21 @@ function verifyHome(req, res, next){
 // employee Blog  postings
 router.post("/scanQRcode",verifyToken, async (req, res) => {
     try {
+            const {        userId: studId,driveId,code,timestamp } = (req.body)
+            if ( !studId || !driveId || !code || !timestamp) {
+                res.send("fields are missing")
+            } else {
+                let jobs = new walkinpostsModel(req.body)
+                let result = await jobs.save()
+                res.send("success")
+            }
+        } catch (error) {
+            // console.log(error.message)
+            res.send("server issue ")
+        }
             let jobs = new QRscannermodel(req.body)
             let result = await jobs.save()
             res.send("success")
-        
-    } catch (error) {
-        // console.log(error.message)
-        res.send("server issue ")
-    }
 })
 
 // ............get all Home jobs for all......
