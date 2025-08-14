@@ -36,10 +36,22 @@ const profileSchema= new mongoose.Schema({
     AboutCompany:{
         type:String
     },
+    PrimeryuserDesignation:{
+        type:String
+    },
+    Secondaryusername:{
+        type: String
+    },
+    Secondaryuseremailid:{
+        type: string,
+        unique: true
+    },
+    Secondaryusercontactnumber:{
+        type:string
+    },
     secondaryuserDesignation:{
         type:String
     },
-    
     CompanyName:{
         type:String
     },
@@ -57,6 +69,9 @@ const profileSchema= new mongoose.Schema({
     },
     TypeofOrganisation:{
         type:String
+    },
+    AboutCompany:{
+        type: String
     },
     isApproved:{
         type:Boolean
