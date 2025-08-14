@@ -63,7 +63,7 @@ router.post("/postQuestion", verifyToken, async (req, res) => {
 })
 
 // ............get all Home jobs for all......
-router.get("/getQuestions", async (req, res) => {
+router.get("/getQuestions",verifyHomeJobs, async (req, res) => {
     try {
         let jobs = await AskQuestionModel.find().select()
         res.send(jobs)
@@ -86,7 +86,7 @@ router.get("/getTagsQuestions/:name", async(req, res)=>{
 })
 
 // .........getJobs for job details...........
-router.get("/getQuestions/:id", async (req, res) => {
+router.get("/getQuestions/:id",verifyHomeJobs, async (req, res) => {
     try {
         let jobs = await AskQuestionModel.findOne({ _id: req.params.id })
         res.send(jobs)
