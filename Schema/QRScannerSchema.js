@@ -10,9 +10,18 @@ const QRScannerSchema = new mongoose.Schema({
         }    
     }
     ],
+    userId:[
+
+    ],
     job_id:[{
 
     }],
+    driveId:[
+
+    ],
+    code:[
+
+    ],
     profileData:{
         type: String
     },
