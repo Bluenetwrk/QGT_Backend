@@ -30,7 +30,7 @@ const profileSchema= new mongoose.Schema({
     Aadhar:{
         type:String
     },
-message:{
+    message:{
     type:String
 
     },
@@ -100,7 +100,49 @@ message:{
             type : Date
         }    
     }
-    ]
+    ],
+    profileSummary:{
+        type: String
+    },
+    college:{
+        type: String
+    },
+    HRsEmployerFeedBack:{
+        type:String
+    },
+    address:{
+        type:String
+    },
+    experiences:[{
+        company:{
+            type: String
+        },
+        role:{
+            type:String
+        },
+        startDate:{
+            type: Date
+        },
+        endDate:{
+            type: Date
+        },
+        descriptions: [
+        
+        ]
+        }],
+        certifications:[
+
+        ],
+        skills:[{
+            heading:{
+
+            },
+            items:{
+
+            }
+        }],
+        languages:[
+        ],
 },
 {timestamps:true})
 

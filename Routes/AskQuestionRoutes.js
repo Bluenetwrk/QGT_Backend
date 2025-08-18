@@ -63,7 +63,7 @@ router.post("/postQuestion", verifyToken, async (req, res) => {
 })
 
 // ............get all Home jobs for all......
-router.get("/getQuestions",verifyHomeJobs, async (req, res) => {
+router.get("/getQuestions", verifyHomeJobs, async (req, res) => {
     try {
         let jobs = await AskQuestionModel.find().select()
         res.send(jobs)

@@ -32,7 +32,7 @@ jobtype:{
 salaryRange:{
     type : String
 },
-Tags:[
+jobTags:[
     
 ],
 jobLocation:{
@@ -50,6 +50,9 @@ skills:[
  driveDate:{
     type : Date
  },
+ selectedDate:{
+    type: Date
+ },
  venue:{
     type : String
  },
@@ -58,6 +61,9 @@ skills:[
  },
  EndTime:{
     type:String
+ },
+ time:{
+    type: Date
  },
  consent:{
     type: Boolean

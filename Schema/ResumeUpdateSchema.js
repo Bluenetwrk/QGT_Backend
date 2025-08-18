@@ -17,7 +17,10 @@ const ResumeUpdateSchema = new mongoose.Schema({
         type:String,
         unique: true
     },
-    experience:[{
+    totalExperience:{
+        type: string
+    },
+    experiences:[{
         company:{
             type: String
         },
@@ -30,36 +33,23 @@ const ResumeUpdateSchema = new mongoose.Schema({
         endDate:{
             type: Date
         },
-        descriptions: {
-            type: String
-        }
+        descriptions: [
+        
+        ]
         }],
-        Certifications:[{
-            formData:{
+        certifications:[
 
-            },
-            certifications:{
-
-            }
-        }],
+        ],
         skills:[{
             heading:{
 
             },
-            skill:{
+            items:{
 
             }
         }],
-        languages:[{
-            formData:{
-
-            },
-            languages:{
-
-            }
-        }],
-
-
+        languages:[
+        ],
 },
 {timestamps:true}
 )
