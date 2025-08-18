@@ -102,7 +102,7 @@ router.get("/getAdminwalkins", verifyHomeJobs, async (req, res) => {
 router.post("/walkinpost", verifyToken, async (req, res) => {
     try {
         const {Logo, empId, companyName, jobTitle, jobDescription, jobtype, 
-            salaryRange, jobLocation, qualification, experiance, skills, driveDate, venue, StartTime,EndTime } = (req.body)
+            salaryRange, jobLocation, qualification, experiance, skills, driveDate, venue, StartTime,EndTime,jobSeekerId,WaitingArea,tokenNo,createdDateTime,updatedDateTime,HRCabin,InterviewCompleted,time,consent } = (req.body)
         if ( !jobDescription || !companyName || !experiance || !jobLocation ||!driveDate || !venue) {
             res.send("fields are missing")
         } else {
@@ -115,7 +115,17 @@ router.post("/walkinpost", verifyToken, async (req, res) => {
         res.send("server issue ")
     }
 })
-
+router.put("/saveToken",verifyToken, async (req, res) => {
+    try {
+        let jobs = new walkinpostsModel(req.body)
+        let result = await jobs.save()
+        res.send("success")
+    
+} catch (error) {
+    // console.log(error.message)
+    res.send("server issue ")
+}
+})
 // ............get all Home jobs for all......
 // router.get("/getHomewalkins", verifyHomeJobs, async (req, res) => {
 //     try {

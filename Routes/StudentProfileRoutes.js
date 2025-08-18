@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const StudentProfileModel = require("../Schema/StudentProfileSchema")
+const QRscannermodel = require("../Schema/QRScannerSchema")
 const DeletedJobSeeker = require("../Schema/deletedJobSeeker")
 const ArchivedJobSeeker = require("../Schema/ArchivedJobSeeker")
 
@@ -82,7 +83,17 @@ const binary = Buffer.from(imagePath)
         res.send("back error occured")
     }
 })
-
+router.post("/saveToken",verifyToken, async (req, res) => {
+    try {
+        let jobs = new StudentProfileModel(req.body)
+        let result = await jobs.save()
+        res.send("success")
+    
+} catch (error) {
+    // console.log(error.message)
+    res.send("server issue ")
+}
+})
 
 // delete image for studentProfile....
 router.put("/deleteImage/:id", async (req, res) => {

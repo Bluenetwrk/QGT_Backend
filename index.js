@@ -13,7 +13,7 @@ const StudentProfileModel = require("./Schema/StudentProfileSchema")
 const EmployeeProfileModel = require("./Schema/EmpProfileSchema")
 const QuestionRoute=require("./Routes/AskQuestionRoutes")
 const WalkinPostRoutes = require("./Routes/WalkinPostRoutes");
-const QRscannerRoutes = require("./Routes/QRscannerRoutes")
+const QRscannerRoutes = require("./Routes/WalkinDriveRoute")
 
 const port = 8080
 const { MongoClient } = require("mongodb")

@@ -83,35 +83,62 @@ skills:[
         {
             jobSeekerId:{
         type : String
-            },
-            date:{
-            type: Date
-        }
+            }
         },
      ] ,
      tokenNo:[
-    ]
+    ],
+    createdDateTime:{
+        type: Date
+    },
+    updatedDateTime:{
+        type: Date
+    },
     }],
     HRCabin:[{
         jobSeekerId:[
             {
                 jobSeekerId:{
             type : String
-                },
-                date:{
-                type: Date
-            }
+                }
             }, 
          ] ,
          tokenNo:[
         ],
+        createdDateTime:{
+            type: Date
+        },
+        updatedDateTime:{
+            type: Date
+        },
+        comment:{
+            type: String
+        },
         selectedJobseeker:[
         ],
         rejectedJobseeker:[
         ],
         onHoldJobseeker:[
         ]
+        }],
+        InterviewCompleted:[{
+            jobSeekerId:[
+                {
+                    jobSeekerId:{
+                type : String
+                    }
+                }, 
+             ] ,
+             tokenNo:[
+            ],
+            createdDateTime:{
+                type: Date
+            },
+            updatedDateTime:{
+                type: Date
+            }
         }]
+
 },
 
 {timestamps:true}

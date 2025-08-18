@@ -1,6 +1,7 @@
 const express = require("express")
 const router = express.Router()
 const StudentProfileModel= require("../Schema/StudentProfileSchema")
+const EmployeeProfileModel= require("../Schema/EmpProfileSchema")
 const QRscannermodel = require("../Schema/QRScannerSchema")
 const DeletedQRcodesmodel = require("../Schema/DeletedQRcodes")
 var nodemailer = require('nodemailer');
@@ -46,7 +47,7 @@ function verifyHome(req, res, next){
 }
 
 // employee Blog  postings
-router.post("/scanQRcode",verifyToken, async (req, res) => {
+router.post("/saveToken",verifyToken, async (req, res) => {
     try {
         let jobs = new QRscannermodel(req.body)
         let result = await jobs.save()
