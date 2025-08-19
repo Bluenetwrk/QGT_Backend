@@ -12,6 +12,10 @@ const ReportFraud = new mongoose.Schema({
     },
     showSuccessMessage:{
 
+    },
+    email:{
+        type: String,
+        unique: true
     }
 },
 {timestamps:true})
