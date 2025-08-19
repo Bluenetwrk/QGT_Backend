@@ -20,6 +20,27 @@ const profileSchema= new mongoose.Schema({
     college:{
         type:Object
     },
+    selectedCountry:{
+
+    },
+    currentEmp:{
+
+    },
+    employers:{
+        
+    },
+    tenth:{
+
+    },
+    twelfth:{
+
+    },
+    degree:{
+
+    },
+    saveComent:{
+
+    },
     email: {
         type: String,
         unique: true
@@ -106,6 +127,9 @@ const profileSchema= new mongoose.Schema({
     },
     college:{
         type: String
+    },
+    message:{
+        type:String
     },
     HRsEmployerFeedBack:{
         type:String

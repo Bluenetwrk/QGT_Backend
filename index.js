@@ -13,7 +13,6 @@ const StudentProfileModel = require("./Schema/StudentProfileSchema")
 const EmployeeProfileModel = require("./Schema/EmpProfileSchema")
 const QuestionRoute=require("./Routes/AskQuestionRoutes")
 const WalkinPostRoutes = require("./Routes/WalkinPostRoutes");
-const QRscannerRoutes = require("./Routes/WalkinDriveRoute")
 
 const port = 8080
 const { MongoClient } = require("mongodb")
@@ -31,7 +30,6 @@ app.use("/jobpost", jobpostRoutes)
 app.use("/BlogRoutes",BlockRoutes)
 app.use("/QuestionRoute",QuestionRoute)
 app.use("/walkinRoute", WalkinPostRoutes)
-app.use("/QRscannerRoutes", QRscannerRoutes)
 app.use("/Careerjobpost", CareerjobpostRoutes)
 app.use("/admin", adminRoutes)
 app.use("/paymentAPI", PaymentRoute)

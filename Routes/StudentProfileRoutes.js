@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const StudentProfileModel = require("../Schema/StudentProfileSchema")
-const QRscannermodel = require("../Schema/QRScannerSchema")
 const DeletedJobSeeker = require("../Schema/deletedJobSeeker")
 const ArchivedJobSeeker = require("../Schema/ArchivedJobSeeker")
 

@@ -102,7 +102,7 @@ router.get("/getAdminwalkins", verifyHomeJobs, async (req, res) => {
 router.post("/walkinpost", verifyToken, async (req, res) => {
     try {
         const {Logo, empId, companyName, jobTitle, jobDescription, jobtype, 
-            salaryRange, jobLocation, qualification, experiance, skills, driveDate, venue, StartTime,EndTime,jobSeekerId,WaitingArea,tokenNo,createdDateTime,updatedDateTime,HRCabin,InterviewCompleted,time,consent } = (req.body)
+            salaryRange, jobLocation, qualification, experiance, skills, driveDate, venue, StartTime,EndTime,jobSeekerId,WaitingArea,tokenNo,createdDateTime,updatedDateTime,HRCabin,InterviewCompleted,time,consent,driveId } = (req.body)
         if ( !jobDescription || !companyName || !experiance || !jobLocation ||!driveDate || !venue) {
             res.send("fields are missing")
         } else {
