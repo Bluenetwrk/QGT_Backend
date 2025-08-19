@@ -26,9 +26,9 @@ const profileSchema= new mongoose.Schema({
     currentEmp:{
 
     },
-    employers:{
-        
-    },
+    employers:[
+
+    ],
     tenth:{
 
     },
