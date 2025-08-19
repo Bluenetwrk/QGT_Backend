@@ -57,3 +57,5 @@ router.put("/updateResume/:id", verifyHomeJobs, async (req, res) => {
         res.send("back end error occured")
     }
 })
+
+module.exports = router

@@ -87,6 +87,9 @@ const profileSchema= new mongoose.Schema({
     },
     online:{
         type:Boolean
+    },
+    message:{
+
     }
 },
 {timestamps:true}
