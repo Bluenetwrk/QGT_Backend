@@ -41,7 +41,7 @@ jobtype:{
 salaryRange:{
     type : String
 },
-Tags:[
+jobTags:[
     
 ],
 jobLocation:{
