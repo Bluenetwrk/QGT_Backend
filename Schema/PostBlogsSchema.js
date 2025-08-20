@@ -32,6 +32,9 @@ type : String
 Designation:{
     type: String
 },
+PrimeryuserDesignation:{
+
+},
 adminLogin:{
     type : String
 },

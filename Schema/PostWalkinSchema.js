@@ -14,6 +14,9 @@ companyName:{
 applyLink:{
     type : String
 },
+successMessage:{
+
+},
 Adminpost:{
     type:Boolean
 },
@@ -21,6 +24,9 @@ empId:{
 type : String
 },
 driveId:{
+
+},
+profileData:{
 
 },
 adminLogin:{
@@ -35,7 +41,7 @@ jobtype:{
 salaryRange:{
     type : String
 },
-jobTags:[
+Tags:[
     
 ],
 jobLocation:{

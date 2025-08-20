@@ -4,7 +4,7 @@ const userSchema = new mongoose.Schema({
     jobSeekerId: {
         type: String,
     },
-    jobId: {
+    driveId: {
         type: String,
 
     },
