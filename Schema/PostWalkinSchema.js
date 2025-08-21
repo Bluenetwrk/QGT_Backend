@@ -23,6 +23,9 @@ Adminpost:{
 empId:{
 type : String
 },
+Jobid:{
+
+},
 driveId:{
 
 },
@@ -74,7 +77,7 @@ skills:[
  time:{
     type: Date
  },
- consent:{
+ concent:{
     type: Boolean
  },
  jobSeekerId:[

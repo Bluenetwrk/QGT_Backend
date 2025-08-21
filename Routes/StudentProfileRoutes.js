@@ -239,7 +239,8 @@ router.post("/Glogin", body('email').isEmail(), async (req, res) => {
     }
 })
 // .........get userprofile to show in my profile and for update , my profile, admin check profile..........
-router.get("/getProfile/:id", verifyToken, async (req, res) => {
+
+router.get("/viewProfile/:id", async (req, res) => {
     try {
         let result = await StudentProfileModel.findOne({ _id: req.params.id })
         if (result) {
