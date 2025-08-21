@@ -1,14 +1,23 @@
 const mongoose = require("mongoose")
 const userSchema = new mongoose.Schema({
     
-    jobSeekerId: {
-        type: String,
-    },
-    driveId: {
-        type: String,
+    jobSeekerId:[
+        {
+            jobSeekerId:{
+        type : String
+            },
+            date:{
+            type: Date
+        },
+        tokenNo:[
 
-    },
-    tokenNo:[]
+        ]
+        },
+     ] ,
+    JobId: [
+
+    ],
+    
 },
 {timestamps:true}
 );

@@ -178,7 +178,7 @@ router.put("/updatPostedwalkin/:id", verifyHomeJobs, async (req, res) => {
     try {
         let result = await walkinpostsModel.updateOne(
            { _id: req.params.id},
-           {$set:req.body}
+           {$addToSet:req.body}
          )
         if (result) {
             res.send("success")
