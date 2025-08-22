@@ -176,19 +176,43 @@ router.get("/getwalkinForUpdate/:id",verifyHomeJobs, async (req, res) => {
 // ..........update for emplyee job posts............
 router.put("/updatPostedwalkin/:id", verifyHomeJobs, async (req, res) => {
     try {
-        let result = await walkinpostsModel.updateOne(
-           { _id: req.params.id},
-           {$addToSet: {jobSeekerId:{},WaitingArea:{},HRCabin:{}}},
-           { new: true },
-           {$set :req.body}
-         )
-        if (result) {
-            res.send("success")
-        }         
+      const { jobSeekerId, WaitingArea, HRCabin, ...rest } = req.body;
+  
+      // Build update payload dynamically
+      const updatePayload = {};
+  
+      // Only add non-empty arrays or objects
+      if (jobSeekerId && Object.keys(jobSeekerId).length > 0) {
+        updatePayload.$addToSet = updatePayload.$addToSet || {};
+        updatePayload.$addToSet.jobSeekerId = jobSeekerId;
+      }
+  
+      if (WaitingArea && Object.keys(WaitingArea).length > 0) {
+        updatePayload.$addToSet = updatePayload.$addToSet || {};
+        updatePayload.$addToSet.WaitingArea = WaitingArea;
+      }
+  
+      if (HRCabin && Object.keys(HRCabin).length > 0) {
+        updatePayload.$addToSet = updatePayload.$addToSet || {};
+        updatePayload.$addToSet.HRCabin = HRCabin;
+      }
+  
+      // Add scalar updates
+      if (Object.keys(rest).length > 0) {
+        updatePayload.$set = rest;
+      }
+  
+      const result = await walkinpostsModel.updateOne(
+        { _id: req.params.id },
+        updatePayload
+      );
+  
+      res.send(result.modifiedCount > 0 ? "success" : "no changes made");
     } catch (err) {
-        res.send("back end error occured")
+      res.status(500).send("backend error occurred");
     }
-})
+  });
+  
 // ...........delete posted job for employee..............
 router.delete("/deletewalkin/:id", async (req, res) => {
     let result = await walkinpostsModel.deleteOne({ _id: req.params.id })
