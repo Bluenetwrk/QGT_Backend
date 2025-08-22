@@ -281,7 +281,7 @@ router.put("/updatProfile/:id", verifyToken, async (req, res) => {
         let result = await StudentProfileModel.updateOne(
             { _id: req.params.id },
             {
-                $addToSet: {tokenNo},
+                $addToSet: {tokenNo:{}},
                 $set: req.body
             })
         if (result) {
