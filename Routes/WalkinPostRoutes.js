@@ -357,7 +357,24 @@ router.get("/getAppliedUserIds/:id", async(req,res)=>{
         res.send("server error occured")
     }
 })
+router.get("/getAppliedProfileByIds/:id", async (req, res) => {
+    let comingArray = req.params.id
+    let spliArray = comingArray.split(",")
 
+    try {
+        // console.log("local value",['6533629f105bb11463d44bb4', '652f76a8eff06fe23539e03d','652f73966749e34e868567e1'])
+        const profile = await StudentProfileModel.find({ _id: { $in: spliArray } })
+        if (profile) {
+            res.send(profile)
+        } else {
+            res.send("not found")
+        }
+
+    } catch (err) {
+        res.send("server error occured")
+        console.log(err)
+    }
+})
 // .select , reject, onhold..............
 router.put("/status/:id", async(req, res)=>{
     try{

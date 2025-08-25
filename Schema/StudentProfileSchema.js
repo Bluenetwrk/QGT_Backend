@@ -167,6 +167,15 @@ const profileSchema= new mongoose.Schema({
         }],
         languages:[
         ],
+        interview:[{
+
+            tokenNo:{},
+   
+            driveId:{},
+   
+            scannedDateTime:{}
+   
+}]
 },
 {timestamps:true})
 
