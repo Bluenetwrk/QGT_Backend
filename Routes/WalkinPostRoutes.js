@@ -275,7 +275,7 @@ router.put("/updatforwalkinApply/:id", verifyToken, async (req, res) => {
                 to: Usermail,
                 subject: `Succesfully Registered for the Walkin ${JobTitle}`,
                 text: "you have registered for walkin successfully",
-                html: `You have Succesfully Registered for the Walkin ${JobTitle}`+'<p>Click <a href="https://www.itwalkin.com/walkindetails/' + btoa(req.params.id) + '"> here </a> to check the full details about the registered walkin</p>'
+                html: `You have Succesfully Registered for the Walkin ${JobTitle}`+'<p>Click <a href="https://www.itwalkin.in/walkindetails/' + btoa(req.params.id) + '"> here </a> to check the full details about the registered walkin</p>'
                 // context:paymentResult
               };
               
