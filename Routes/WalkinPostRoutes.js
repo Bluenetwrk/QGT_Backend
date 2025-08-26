@@ -299,7 +299,7 @@ router.put("/updatforwalkinApply/:id", verifyToken, async (req, res) => {
 router.get("/getMyAppliedwalkin/:id", verifyToken, async (req, res) => {
     try {
         // let jobs = await JobpostsModel.find({jobSeekerId: req.params.id })
-    let jobs = await WalkinAppliedModel.find({jobSeekerId: {$elemMatch: {jobSeekerId: req.params.id }}})
+    let jobs = await walkinpostsModel.find({jobSeekerId: {$elemMatch: {jobSeekerId: req.params.id }}})
 
         res.send(jobs)
     } catch (err) {
