@@ -187,7 +187,7 @@ var transporter = nodemailer.createTransport({
     from: 'bluenetwrk@gmail.com',
     to: result.email,
     subject: `Successfully Registered with Itwalkin`,
-    html: '<p>Welcome to Itwalkin Job Portal</p>'+'<p>click <a href="http://www.itwalkin.com">itwalkin</a> to explore more </p>'
+    html: '<p>Welcome to Itwalkin Job Portal</p>'+'<p>click <a href="http://www.itwalkin.in">itwalkin</a> to explore more </p>'
   };
   
   transporter.sendMail(mailOptions,  function(error, info){
