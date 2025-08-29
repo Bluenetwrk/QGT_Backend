@@ -80,7 +80,13 @@ skills:[
  concent:{
     type: Boolean
  },
- jobSeekerId:[
+ slectedJobseker:[
+],
+rejectedJobseker:[
+],
+onHoldJobseker:[
+],
+jobSeekerId:[
     {
         jobSeekerId:{
     type : String
@@ -126,12 +132,13 @@ skills:[
         comment:{
             type: String
         },
-        selectedJobseeker:[
+        slectedJobseker:[
         ],
-        rejectedJobseeker:[
+        rejectedJobseker:[
         ],
-        onHoldJobseeker:[
+        onHoldJobseker:[
         ]
+        
         }],
         InterviewCompleted:[{
             jobSeekerId:[

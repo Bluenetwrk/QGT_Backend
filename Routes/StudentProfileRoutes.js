@@ -357,7 +357,6 @@ router.put("/setApproval/:id", async (req, res) => {
         res.send("backend error occured")
     }
 })
-
 // update for Reject from admin
 router.put("/isReject/:id", async (req, res) => {
     try {
@@ -372,7 +371,6 @@ router.put("/isReject/:id", async (req, res) => {
         res.send("backend error occured")
     }
 })
-
 // isOnhold status from admin
 
 router.put("/isOnhold/:id", async (req, res) => {
@@ -388,7 +386,6 @@ router.put("/isOnhold/:id", async (req, res) => {
         res.send("backend error occured")
     }
 })
-
 // find all Approved Jobseekers for admin
 router.get("/getApprovedStu", async (req, res) => {
     try {

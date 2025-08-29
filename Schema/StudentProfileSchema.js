@@ -86,15 +86,6 @@ const profileSchema= new mongoose.Schema({
        select: {
             type:String}
     },
-    select:{
-        type:String
-    },
-    reject:{
-        type:String
-    },
-    Onhold:{
-        type:String
-    },
     isApproved:{
         type:Boolean
     },
