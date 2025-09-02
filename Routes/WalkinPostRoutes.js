@@ -102,7 +102,7 @@ router.get("/getAdminwalkins", verifyHomeJobs, async (req, res) => {
 router.post("/walkinpost", verifyToken, async (req, res) => {
     try {
         const {Logo, empId, companyName, jobTitle, jobDescription, jobtype, profileData,adminLogin,Tags,selectedDate,successMessage,Adminpost,comment,
-            salaryRange, jobLocation, qualification, experiance, skills, driveDate, venue, StartTime,EndTime,jobSeekerId,WaitingArea,tokenNo,createdDateTime,updatedDateTime,HRCabin,InterviewCompleted,time,concent,driveId } = (req.body)
+            salaryRange, jobLocation, qualification, experiance, skills, driveDate, venue, StartTime,EndTime,jobSeekerId,WaitingArea,tokenNo,createdDateTime,updatedDateTime,HRCabin,InterviewCompleted,time,concent,driveId,QRCodeDetection,HRId } = (req.body)
         if ( !jobDescription || !companyName || !experiance || !jobLocation ||!driveDate || !venue) {
             res.send("fields are missing")
         } else {
@@ -176,7 +176,7 @@ router.get("/getwalkinForUpdate/:id",verifyHomeJobs, async (req, res) => {
 // ..........update for emplyee job posts............
 router.put("/updatPostedwalkin/:id", verifyHomeJobs, async (req, res) => {
     try {
-      const { jobSeekerId, WaitingArea, HRCabin, ...rest } = req.body;
+      const { jobSeekerId, WaitingArea, HRCabin,InterviewCompleted,QRCodeDetection, ...rest } = req.body;
   
       // Build update payload dynamically
       const updatePayload = {};
@@ -196,6 +196,15 @@ router.put("/updatPostedwalkin/:id", verifyHomeJobs, async (req, res) => {
         updatePayload.$addToSet = updatePayload.$addToSet || {};
         updatePayload.$addToSet.HRCabin = HRCabin;
       }
+      if (InterviewCompleted && Object.keys(InterviewCompleted).length > 0) {
+        updatePayload.$addToSet = updatePayload.$addToSet || {};
+        updatePayload.$addToSet.InterviewCompleted = InterviewCompleted;
+      }
+      if (QRCodeDetection && Object.keys(QRCodeDetection).length > 0) {
+        updatePayload.$addToSet = updatePayload.$addToSet || {};
+        updatePayload.$addToSet.QRCodeDetection = QRCodeDetection;
+      }
+
   
       // Add scalar updates
       if (Object.keys(rest).length > 0) {
@@ -491,7 +500,7 @@ router.get("/getLimitWalkins/:limit", verifyHomeJobs, async(req, res)=>{
     // console.log(page)
     // console.log(limitValue)
     try{
-       let result = await walkinpostsModel.find().sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
+       let result = await walkinpostsModel.find({driveDate: {$gte : currentDate}}).sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
        res.send(result)
     }catch(err){
         res.send("server error")
@@ -500,7 +509,7 @@ router.get("/getLimitWalkins/:limit", verifyHomeJobs, async(req, res)=>{
 
 router.get("/getTotalCount", async(req, res)=>{
     try{
-       let result =await walkinpostsModel.estimatedDocumentCount()
+       let result =await walkinpostsModel.find({driveDate: {$gte : currentDate}}).estimatedDocumentCount()
     //    console.log(result)
        res.status(200).send({"result":result})
     }catch(err){

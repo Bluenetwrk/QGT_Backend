@@ -156,6 +156,19 @@ jobSeekerId:[
             updatedDateTime:{
                 type: Date
             }
+        }],
+        QRCodeDetection:[{
+            HRId:[
+
+            ],
+            jobSeekerId:[
+                {
+                    jobSeekerId:{
+                type : String
+                    }
+                }, 
+             ] ,
+
         }]
 
 },
