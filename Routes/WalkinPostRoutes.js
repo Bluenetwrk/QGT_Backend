@@ -500,6 +500,7 @@ router.get("/getLimitWalkins/:limit", verifyHomeJobs, async(req, res)=>{
     // console.log(page)
     // console.log(limitValue)
     try{
+        const currentDate = new Date();
        let result = await walkinpostsModel.find({driveDate: {$gte : currentDate}}).sort({ "createdAt": -1 }).skip((page - 1) * limitValue).limit(limitValue)
        res.send(result)
     }catch(err){
@@ -509,6 +510,7 @@ router.get("/getLimitWalkins/:limit", verifyHomeJobs, async(req, res)=>{
 
 router.get("/getTotalCount", async(req, res)=>{
     try{
+        const currentDate = new Date();
        let result =await walkinpostsModel.find({driveDate: {$gte : currentDate}}).estimatedDocumentCount()
     //    console.log(result)
        res.status(200).send({"result":result})
