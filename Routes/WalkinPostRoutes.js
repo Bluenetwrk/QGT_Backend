@@ -78,7 +78,8 @@ router.get("/getHomewalkins", verifyHomeJobs, async (req, res) => {
     }
 })
 //......get all active walkins......
-router.get("/allactivewalkins", verifyHomeJobs, async (req,res) => {
+router.get("/allactivewalkins", verifyHomeJobs, 
+    async (req,res) => {
     try { 
         const currentDate = new Date();
         let jobs = await walkinpostsModel.find({driveDate: {$gte : currentDate}})
@@ -511,7 +512,7 @@ router.get("/getLimitWalkins/:limit", verifyHomeJobs, async(req, res)=>{
 router.get("/getTotalCount", async(req, res)=>{
     try{
         const currentDate = new Date();
-       let result =await walkinpostsModel.find({driveDate: {$gte : currentDate}}).estimatedDocumentCount()
+        const result = await walkinpostsModel.countDocuments({ driveDate: { $gte: currentDate } });
     //    console.log(result)
        res.status(200).send({"result":result})
     }catch(err){
