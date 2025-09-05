@@ -206,12 +206,12 @@ router.post("/Glogin", body('email').isEmail(), async (req, res) => {
             var transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                    user: 'bluenetwrk@gmail.com',
-                    pass: 'vwzv axcq ywrw bxjd'
+                    user: 'admin@itwalkin.com',
+                    pass: 'hvzd mjnq yfxa eljs'
                 }
             });
             var mailOptions = {
-                from: 'bluenetwrk@gmail.com',
+                from: 'admin@itwalkin.com',
                 to: result.email,
                 subject: `Successfully Registered with Itwalkin`,
                 html: '<p>Welcome to Itwalkin Job Portal</p>' + '<p>click <a href="http://www.itwalkin.in">itwalkin</a> to explore more </p>'

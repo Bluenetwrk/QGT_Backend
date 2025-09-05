@@ -276,12 +276,12 @@ router.put("/updatforwalkinApply/:id", verifyToken, async (req, res) => {
             var transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-       user: 'bluenetwrk@gmail.com',
-      pass: 'vwzv axcq ywrw bxjd'
+       user: 'admin@itwalkin.com',
+      pass: 'hvzd mjnq yfxa eljs'
                 }
               });
               var mailOptions = {
-                from: 'bluenetwrk@gmail.com',
+                from: 'admin@itwalkin.com',
                 to: Usermail,
                 subject: `Succesfully Registered for the Walkin ${JobTitle}`,
                 text: "you have registered for walkin successfully",
