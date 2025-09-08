@@ -183,9 +183,13 @@ router.put("/updatPostedwalkin/:id", verifyHomeJobs, async (req, res) => {
       const updatePayload = {};
   
       // Only add non-empty arrays or objects
-      if (jobSeekerId && Object.keys(jobSeekerId).length > 0) {
-        updatePayload.$addToSet = updatePayload.$addToSet || {};
-        updatePayload.$addToSet.jobSeekerId = jobSeekerId;
+      if (jobSeekerId) {
+        const existingIds = currentDocument.jobSeekerId || []; // Replace with actual source of existing IDs
+      
+        if (!existingIds.includes(jobSeekerId)) {
+          updatePayload.$addToSet = updatePayload.$addToSet || {};
+          updatePayload.$addToSet.jobSeekerId = jobSeekerId;
+        }
       }
   
       if (WaitingArea && Object.keys(WaitingArea).length > 0) {
