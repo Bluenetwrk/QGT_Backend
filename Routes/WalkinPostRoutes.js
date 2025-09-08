@@ -177,56 +177,39 @@ router.get("/getwalkinForUpdate/:id",verifyHomeJobs, async (req, res) => {
 // ..........update for emplyee job posts............
 router.put("/updatPostedwalkin/:id", verifyHomeJobs, async (req, res) => {
     try {
-      const {
-        jobSeekerId,
-        WaitingArea,
-        HRCabin,
-        InterviewCompleted,
-        QRCodeDetection,
-        ...rest
-      } = req.body;
+      const { jobSeekerId, WaitingArea, HRCabin,InterviewCompleted,QRCodeDetection, ...rest } = req.body;
   
+      // Build update payload dynamically
       const updatePayload = {};
   
-      // Fetch the existing document
-      const existingDoc = await walkinpostsModel.findById(req.params.id);
-      if (!existingDoc) {
-        return res.status(404).send("Document not found");
-      }
-  
-      // Check if jobSeekerId already exists
-      const jobSeekerExists = existingDoc.jobSeekerId?.some(
-        id => JSON.stringify(id) === JSON.stringify(jobSeekerId)
-      );
-  
+      // Only add non-empty arrays or objects
       if (jobSeekerId && Object.keys(jobSeekerId).length > 0) {
-        if (!jobSeekerExists) {
-          // Add new jobSeekerId
-          updatePayload.$addToSet = updatePayload.$addToSet || {};
-          updatePayload.$addToSet.jobSeekerId = jobSeekerId;
-        } else {
-          // Update existing jobSeekerId-related data
-          updatePayload.$set = updatePayload.$set || {};
-          // Assuming jobSeekerId is an object with a unique identifier like jobSeekerId._id
-          // You may need to update nested fields using dot notation or array filters
-          // Example: updatePayload.$set["jobSeekerId.$.status"] = "updated";
-          // This requires a more complex query with arrayFilters
-        }
+        updatePayload.$addToSet = updatePayload.$addToSet || {};
+        updatePayload.$addToSet.jobSeekerId = jobSeekerId;
       }
   
-      // Add other fields to $addToSet if needed
-      const addToSetFields = { WaitingArea, HRCabin, InterviewCompleted, QRCodeDetection };
-      for (const [key, value] of Object.entries(addToSetFields)) {
-        if (value && Object.keys(value).length > 0) {
-          updatePayload.$addToSet = updatePayload.$addToSet || {};
-          updatePayload.$addToSet[key] = value;
-        }
+      if (WaitingArea && Object.keys(WaitingArea).length > 0) {
+        updatePayload.$addToSet = updatePayload.$addToSet || {};
+        updatePayload.$addToSet.WaitingArea = WaitingArea;
       }
+  
+      if (HRCabin && Object.keys(HRCabin).length > 0) {
+        updatePayload.$addToSet = updatePayload.$addToSet || {};
+        updatePayload.$addToSet.HRCabin = HRCabin;
+      }
+      if (InterviewCompleted && Object.keys(InterviewCompleted).length > 0) {
+        updatePayload.$addToSet = updatePayload.$addToSet || {};
+        updatePayload.$addToSet.InterviewCompleted = InterviewCompleted;
+      }
+      if (QRCodeDetection && Object.keys(QRCodeDetection).length > 0) {
+        updatePayload.$addToSet = updatePayload.$addToSet || {};
+        updatePayload.$addToSet.QRCodeDetection = QRCodeDetection;
+      }
+
   
       // Add scalar updates
       if (Object.keys(rest).length > 0) {
-        updatePayload.$set = updatePayload.$set || {};
-        Object.assign(updatePayload.$set, rest);
+        updatePayload.$set = rest;
       }
   
       const result = await walkinpostsModel.updateOne(
