@@ -177,21 +177,27 @@ router.get("/getwalkinForUpdate/:id",verifyHomeJobs, async (req, res) => {
 // ..........update for emplyee job posts............
 router.put("/updatPostedwalkin/:id", verifyHomeJobs, async (req, res) => {
     try {
-      const { jobSeekerId, WaitingArea, HRCabin,InterviewCompleted,QRCodeDetection, ...rest } = req.body;
+      const { jobSeekerId, WaitingArea, HRCabin, InterviewCompleted, QRCodeDetection, ...rest } = req.body;
   
-      // Build update payload dynamically
-      const updatePayload = {};
-  
-      // Only add non-empty arrays or objects
-      if (jobSeekerId) {
-        const existingIds = currentDocument.jobSeekerId || []; // Replace with actual source of existing IDs
-      
-        if (!existingIds.includes(jobSeekerId)) {
-          updatePayload.$addToSet = updatePayload.$addToSet || {};
-          updatePayload.$addToSet.jobSeekerId = jobSeekerId;
-        }
+      // Fetch existing document
+      const existingDoc = await walkinpostsModel.findById(req.params.id);
+      if (!existingDoc) {
+        return res.status(404).send("Document not found");
       }
   
+      const updatePayload = {};
+  
+      // Conditionally add jobSeekerId only if it's new
+      if (
+        jobSeekerId &&
+        Object.keys(jobSeekerId).length > 0 &&
+        !existingDoc.jobSeekerId?.some(id => JSON.stringify(id) === JSON.stringify(jobSeekerId))
+      ) {
+        updatePayload.$addToSet = updatePayload.$addToSet || {};
+        updatePayload.$addToSet.jobSeekerId = jobSeekerId;
+      }
+  
+      // Repeat similar logic for other fields if needed
       if (WaitingArea && Object.keys(WaitingArea).length > 0) {
         updatePayload.$addToSet = updatePayload.$addToSet || {};
         updatePayload.$addToSet.WaitingArea = WaitingArea;
@@ -201,15 +207,16 @@ router.put("/updatPostedwalkin/:id", verifyHomeJobs, async (req, res) => {
         updatePayload.$addToSet = updatePayload.$addToSet || {};
         updatePayload.$addToSet.HRCabin = HRCabin;
       }
+  
       if (InterviewCompleted && Object.keys(InterviewCompleted).length > 0) {
         updatePayload.$addToSet = updatePayload.$addToSet || {};
         updatePayload.$addToSet.InterviewCompleted = InterviewCompleted;
       }
+  
       if (QRCodeDetection && Object.keys(QRCodeDetection).length > 0) {
         updatePayload.$addToSet = updatePayload.$addToSet || {};
         updatePayload.$addToSet.QRCodeDetection = QRCodeDetection;
       }
-
   
       // Add scalar updates
       if (Object.keys(rest).length > 0) {
