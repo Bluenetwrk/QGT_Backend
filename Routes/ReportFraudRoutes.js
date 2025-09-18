@@ -66,5 +66,27 @@ router.get("/getAllreportedFrauds", verifyHomeJobs, async (req, res) => {
         res.status(401).send("server issue")
     }
 })
+//  get job by Tag filter
+router.get("/getTagsFraudReport/:name", async(req, res)=>{
+    try{
+        let result = await reportFraudModel.aggregate([{$match:{Tags:req.params.name}}]) 
+        //or
+    // let result = await JobpostsModel.find({Tags:  req.params.name })
+    // let result = await JobpostsModel.find({Tags: {$elemMatch: {value: req.params.name }}}) //this one if for object in array in db
+        res.send(result)
+    }catch(err){
+        res.send("server error")
+    }
+})
+
+// .........getJobs for job details...........
+router.get("/getfraudreport/:id",verifyHomeJobs, async (req, res) => {
+    try {
+        let jobs = await reportFraudModel.findOne({ _id: req.params.id })
+        res.send(jobs)
+    } catch (err) {
+        res.status(401).send("server issue")
+    }
+})
 
 module.exports = router

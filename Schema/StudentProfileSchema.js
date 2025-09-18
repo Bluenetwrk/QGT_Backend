@@ -14,6 +14,12 @@ const profileSchema= new mongoose.Schema({
     name:{
         type:String
     },
+    profileData: {
+        type: String
+    },
+    profileSummary:{
+        type: String
+    },
     city:{
         type:Object
     },
@@ -113,12 +119,6 @@ const profileSchema= new mongoose.Schema({
         }    
     }
     ],
-    profileSummary:{
-        type: String
-    },
-    college:{
-        type: String
-    },
     message:{
         type:String
     },
@@ -127,6 +127,9 @@ const profileSchema= new mongoose.Schema({
     },
     address:{
         type:String
+    },
+    totalExperience:{
+        type: String
     },
     experiences:[{
         company:{
