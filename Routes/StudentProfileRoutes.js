@@ -181,12 +181,7 @@ router.post("/JobseekerRegister", async (req, res) => {
     // console.log(req.body)    
     try {
         let user = await new StudentProfileModel(req.body)
-        let result = await StudentProfileModel.updateOne(
-            { _id: req.params.id },
-            {
-                $addToSet: {tokenNo:{}},
-                $set: req.body
-            })
+        let result = await user.save()
         if (result) {
             res.send("success")
         }
