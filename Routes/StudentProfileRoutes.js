@@ -193,14 +193,14 @@ router.post("/JobseekerRegister", async (req, res) => {
 // .....initial login.............................
 router.post("/Glogin", body('email').isEmail(), async (req, res) => {
     try {
-        let { userId, gtoken, email, name, isApproved, ipAddress, Gpicture } = (req.body)
+        let { userId, gtoken, email, name, isApproved, ipAddress, Gpicture, city,college,currentEmp,employers,selectedCountry,age,Experiance  } = (req.body)
         const error = validationResult(req)
         if (!error.isEmpty()) {
             return res.send("invalid email")
         }
         let user = await StudentProfileModel.findOne({ email: email });
         if (user == null) {
-            const user = await new StudentProfileModel({ userId: userId, email: email, Gpicture: Gpicture, name: name, isApproved: isApproved, ipAddress: ipAddress })
+            const user = await new StudentProfileModel({ userId: userId, email: email, Gpicture: Gpicture, name: name, isApproved: isApproved, ipAddress: ipAddress,college:college,city:city,currentEmp:currentEmp,employers:employers,selectedCountry:selectedCountry,age:age,Experiance:Experiance })
             const result = await user.save(user)
 
             var transporter = nodemailer.createTransport({
@@ -228,7 +228,8 @@ router.post("/Glogin", body('email').isEmail(), async (req, res) => {
             let Nowtime = Date()  
             let result = await StudentProfileModel.updateOne(
                 {_id: user._id},
-               {$set: {LogedInTime:Nowtime, Gpicture: Gpicture}}
+               {$set: {LogedInTime:Nowtime, Gpicture: Gpicture}},
+               {$set:req.body}
             )
             let gtoken = jwt.sign({ id: user._id }, secretKey)
             res.send({ status: "success", token: gtoken, id: user._id, action:"login" })
