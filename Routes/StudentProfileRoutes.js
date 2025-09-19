@@ -193,14 +193,19 @@ router.post("/JobseekerRegister", async (req, res) => {
 // .....initial login.............................
 router.post("/Glogin", body('email').isEmail(), async (req, res) => {
     try {
-        let { userId, gtoken, email, name, isApproved, ipAddress, Gpicture, city,college,currentEmp,employers,selectedCountry,age,Experiance  } = (req.body)
+        let { userId, gtoken, email, name, isApproved, ipAddress, Gpicture, city,college,currentEmp,
+            employers,selectedCountry,age,Experiance,phoneNumber,Aadhar,panCard,NoticePeriod, ExpectedSalary,
+            currentCTC,Qualification,tags,tenth,twelfth,degree} = (req.body)
         const error = validationResult(req)
         if (!error.isEmpty()) {
             return res.send("invalid email")
         }
         let user = await StudentProfileModel.findOne({ email: email });
         if (user == null) {
-            const user = await new StudentProfileModel({ userId: userId, email: email, Gpicture: Gpicture, name: name, isApproved: isApproved, ipAddress: ipAddress,college:college,city:city,currentEmp:currentEmp,employers:employers,selectedCountry:selectedCountry,age:age,Experiance:Experiance })
+            const user = await new StudentProfileModel({ userId: userId, email: email, Gpicture: Gpicture, name: name, isApproved: isApproved, ipAddress: ipAddress,
+                college:college,city:city,currentEmp:currentEmp,employers:employers,selectedCountry:selectedCountry,age:age,Experiance:Experiance,phoneNumber:phoneNumber,
+                Aadhar:Aadhar,panCard:panCard,NoticePeriod:NoticePeriod,ExpectedSalary:ExpectedSalary,currentCTC:currentCTC,Qualification:Qualification,tags:tags,tenth:tenth,
+                twelfth:twelfth,degree:degree})
             const result = await user.save(user)
 
             var transporter = nodemailer.createTransport({
