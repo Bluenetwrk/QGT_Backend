@@ -211,12 +211,12 @@ router.post("/Glogin", body('email').isEmail(), async (req, res) => {
             var transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                    user: 'admin@itwalkin.com',
-                    pass: 'hvzd mjnq yfxa eljs'
+                    user: 'luenetwrk@gmail.com',
+                    pass: 'vwzv axcq ywrw bxjd'
                 }
             });
             var mailOptions = {
-                from: 'admin@itwalkin.com',
+                from: 'bluenetwrk@gmail.com',
                 to: result.email,
                 subject: `Successfully Registered with Itwalkin`,
                 html: '<p>Welcome to Itwalkin Job Portal</p>' + '<p>click <a href="http://www.itwalkin.in">itwalkin</a> to explore more </p>'
@@ -287,7 +287,7 @@ router.put("/updatProfile/:id", verifyToken, async (req, res) => {
         let result = await StudentProfileModel.updateOne(
             { _id: req.params.id },
             {
-                $addToSet: {tokenNo:{}},
+                $addToSet: {tokenNo:{},HRsEmployerFeedBack:{}},
                 $set: req.body
             })
         if (result) {
