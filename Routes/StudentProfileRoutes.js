@@ -195,7 +195,7 @@ router.post("/Glogin", body('email').isEmail(), async (req, res) => {
     try {
         let { userId, gtoken, email, name, isApproved, ipAddress, Gpicture, city,college,currentEmp,
             employers,selectedCountry,age,Experiance,phoneNumber,Aadhar,panCard,NoticePeriod, ExpectedSalary,
-            currentCTC,Qualification,tags,tenth,twelfth,degree} = (req.body)
+            currentCTC,Qualification,Tags,tenth,twelfth,degree} = (req.body)
         const error = validationResult(req)
         if (!error.isEmpty()) {
             return res.send("invalid email")
@@ -204,19 +204,19 @@ router.post("/Glogin", body('email').isEmail(), async (req, res) => {
         if (user == null) {
             const user = await new StudentProfileModel({ userId: userId, email: email, Gpicture: Gpicture, name: name, isApproved: isApproved, ipAddress: ipAddress,
                 college:college,city:city,currentEmp:currentEmp,employers:employers,selectedCountry:selectedCountry,age:age,Experiance:Experiance,phoneNumber:phoneNumber,
-                Aadhar:Aadhar,panCard:panCard,NoticePeriod:NoticePeriod,ExpectedSalary:ExpectedSalary,currentCTC:currentCTC,Qualification:Qualification,tags:tags,tenth:tenth,
+                Aadhar:Aadhar,panCard:panCard,NoticePeriod:NoticePeriod,ExpectedSalary:ExpectedSalary,currentCTC:currentCTC,Qualification:Qualification,Tags:Tags,tenth:tenth,
                 twelfth:twelfth,degree:degree})
             const result = await user.save(user)
 
             var transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                    user: 'bluenetwrk@gmail.com',
-                    pass: 'vwzv axcq ywrw bxjd'
+                    user: 'admin@itwalkin.com',
+                    pass: 'hvzd mjnq yfxa eljs'
                 }
             });
             var mailOptions = {
-                from: 'bluenetwrk@gmail.com',
+                from: 'admin@itwalkin.com',
                 to: result.email,
                 subject: `Successfully Registered with Itwalkin`,
                 html: '<p>Welcome to Itwalkin Job Portal</p>' + '<p>click <a href="http://www.itwalkin.in">itwalkin</a> to explore more </p>'
