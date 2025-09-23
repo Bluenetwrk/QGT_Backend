@@ -211,7 +211,7 @@ router.post("/Glogin", body('email').isEmail(), async (req, res) => {
             var transporter = nodemailer.createTransport({
                 service: 'gmail',
                 auth: {
-                    user: 'luenetwrk@gmail.com',
+                    user: 'bluenetwrk@gmail.com',
                     pass: 'vwzv axcq ywrw bxjd'
                 }
             });
@@ -244,6 +244,8 @@ router.post("/Glogin", body('email').isEmail(), async (req, res) => {
         res.send("backend error")
     }
 })
+// Login with LinkeIn
+
 // .........get userprofile to show in my profile and for update , my profile, admin check profile..........
 
 router.get("/viewProfile/:id", async (req, res) => {
@@ -283,21 +285,35 @@ router.post("/loginforAdmin", body('email').isEmail(), async (req, res) => {
 // .....update full student profile...........
 router.put("/updatProfile/:id", verifyToken, async (req, res) => {
     try {
-
-        let result = await StudentProfileModel.updateOne(
-            { _id: req.params.id },
-            {
-                $addToSet: {tokenNo:{},HRsEmployerFeedBack:{}},
-                $set: req.body
-            })
-        if (result) {
-            res.send("success")
-        }
-
+      const { tokenNo, HRsEmployerFeedBack, interview, ...rest } = req.body;
+  
+      const updateFields = {
+        $set: rest,
+      };
+  
+      // Add to arrays only if values are provided
+      if (tokenNo || HRsEmployerFeedBack || interview) {
+        updateFields.$addToSet = {};
+        if (tokenNo) updateFields.$addToSet.tokenNo = tokenNo;
+        if (HRsEmployerFeedBack) updateFields.$addToSet.HRsEmployerFeedBack = HRsEmployerFeedBack;
+        if (interview) updateFields.$addToSet.interview = interview;
+      }
+  
+      const result = await StudentProfileModel.updateOne(
+        { _id: req.params.id },
+        updateFields
+      );
+  
+      if (result.modifiedCount > 0) {
+        res.send("success");
+      } else {
+        res.status(404).send("No document updated");
+      }
     } catch (err) {
-        res.send("back end error occured")
+      console.error(err);
+      res.status(500).send("Backend error occurred");
     }
-})
+  });
 // authentic for logout jobseeker
 function CheckComp(req, res, next){
     let valid=req.headers['authorization']
