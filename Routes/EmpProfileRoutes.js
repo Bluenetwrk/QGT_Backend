@@ -168,13 +168,13 @@ router.post("/verifyOtp", async (req, res) => {
 router.post("/Glogin", async (req, res) => {
     // console.log(req.body)
     try {
-    let { userId, gtoken, email, name, isApproved, ipAddress } = (req.body)
+    let { userId, gtoken, email, name, isApproved, ipAddress,Gpicture } = (req.body)
 
         let user = await EmpProfileModel.findOne({ email: email });
         if (user == null) {
-        const user = await new EmpProfileModel(req.body)
-        // const user = await new EmpProfileModel({ email: email, name: name,  userId : userId, 
-        //     isApproved:isApproved, ipAddress:ipAddress})
+        //const user = await new EmpProfileModel(req.body)
+            const user = await new EmpProfileModel({ email: email, name: name,  userId : userId, 
+             isApproved:isApproved, ipAddress:ipAddress, Gpicture: Gpicture })
         const result = await user.save(user)                     
 var transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -206,7 +206,8 @@ var transporter = nodemailer.createTransport({
             let Nowtime = Date()  
             let result = await EmpProfileModel.updateOne(
                 {_id: user._id},
-               {$set: {LogedInTime:Nowtime}}
+               {$set: {LogedInTime:Nowtime,Gpicture: Gpicture}},
+               {$set:req.body}
             )
             let gtoken = jwt.sign({id:user._id},secretKey)
             res.send({status : "success" ,token : gtoken ,id: user._id, action:"login"})

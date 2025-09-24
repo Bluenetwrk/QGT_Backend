@@ -14,6 +14,9 @@ const profileSchema= new mongoose.Schema({
     ipAddress:{
         type:String
     },
+    Gpicture : { 
+        type:String
+    },
     message:{
         type:String
     

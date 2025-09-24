@@ -193,19 +193,14 @@ router.post("/JobseekerRegister", async (req, res) => {
 // .....initial login.............................
 router.post("/Glogin", body('email').isEmail(), async (req, res) => {
     try {
-        let { userId, gtoken, email, name, isApproved, ipAddress, Gpicture, city,college,currentEmp,
-            employers,selectedCountry,age,Experiance,phoneNumber,Aadhar,panCard,NoticePeriod, ExpectedSalary,
-            currentCTC,Qualification,Tags,tenth,twelfth,degree} = (req.body)
+        let { userId, gtoken, email, name, isApproved, ipAddress, Gpicture } = (req.body)
         const error = validationResult(req)
         if (!error.isEmpty()) {
             return res.send("invalid email")
         }
         let user = await StudentProfileModel.findOne({ email: email });
         if (user == null) {
-            const user = await new StudentProfileModel({ userId: userId, email: email, Gpicture: Gpicture, name: name, isApproved: isApproved, ipAddress: ipAddress,
-                college:college,city:city,currentEmp:currentEmp,employers:employers,selectedCountry:selectedCountry,age:age,Experiance:Experiance,phoneNumber:phoneNumber,
-                Aadhar:Aadhar,panCard:panCard,NoticePeriod:NoticePeriod,ExpectedSalary:ExpectedSalary,currentCTC:currentCTC,Qualification:Qualification,Tags:Tags,tenth:tenth,
-                twelfth:twelfth,degree:degree})
+            const user = await new StudentProfileModel({ userId: userId, email: email, Gpicture: Gpicture, name: name, isApproved: isApproved, ipAddress: ipAddress})
             const result = await user.save(user)
 
             var transporter = nodemailer.createTransport({
@@ -244,8 +239,40 @@ router.post("/Glogin", body('email').isEmail(), async (req, res) => {
         res.send("backend error")
     }
 })
-// Login with LinkeIn
-
+// Login with LinkedIn
+// app.get('/auth/linkedin/callback', async (req, res) => {
+//     const code = req.query.code;
+//     const redirectUri = 'http://localhost:3000/auth/linkedin/callback';
+  
+//     const tokenResponse = await axios.post('https://www.linkedin.com/oauth/v2/accessToken', null, {
+//       params: {
+//         grant_type: 'authorization_code',
+//         code,
+//         redirect_uri: redirectUri,
+//         client_id: 'YOUR_CLIENT_ID',
+//         client_secret: 'YOUR_CLIENT_SECRET'
+//       }
+//     });
+  
+//     const accessToken = tokenResponse.data.access_token;
+  
+//     const profileResponse = await axios.get('https://api.linkedin.com/v2/me', {
+//       headers: { Authorization: `Bearer ${accessToken}` }
+//     });
+  
+//     const emailResponse = await axios.get('https://api.linkedin.com/v2/emailAddress?q=members&projection=(elements*(handle~))', {
+//       headers: { Authorization: `Bearer ${accessToken}` }
+//     });
+  
+//     const userData = {
+//       id: profileResponse.data.id,
+//       name: `${profileResponse.data.localizedFirstName} ${profileResponse.data.localizedLastName}`,
+//       email: emailResponse.data.elements[0]['handle~'].emailAddress
+//     };
+  
+//     // Save userData to MongoDB or start session
+//     res.json(userData);
+//   });
 // .........get userprofile to show in my profile and for update , my profile, admin check profile..........
 
 router.get("/viewProfile/:id", async (req, res) => {
