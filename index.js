@@ -1,5 +1,6 @@
 
 const cors = require("cors")
+const cookieparser = require("cookie-parser")
 const express = require("express");
 const app = express();
 const StudentProfileRoutes = require("./Routes/StudentProfileRoutes");
@@ -23,6 +24,7 @@ dbconnection()
 // dbconnection()
 app.use(express.json())
 app.use(cors())
+app.use(cookieparser())
 
 const fs=require("fs")
 app.use(express.static('public'))
@@ -52,7 +54,8 @@ const server = http.createServer(app)
 
 const io= new Server(server,{
     cors:{
-        origin:"*"
+        origin:"*",
+        credentials: true
     }
 })
 // const uns=io.of('/student-namespace')

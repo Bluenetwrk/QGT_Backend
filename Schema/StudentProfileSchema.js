@@ -79,9 +79,23 @@ const profileSchema= new mongoose.Schema({
     age:{
         type:String
     },
-    Qualification:{
-        type:String
-    },
+    qualificationDetails:[{
+        degree:{
+            type:String
+        },
+        score:{
+            type:String
+        },
+        collegeName:{
+            type:String
+        },
+        stateCode:{
+            type:String
+        },
+        countryCode:{
+            type:String
+        }
+    }],
     Skills:{
         type:String
     },
@@ -122,9 +136,9 @@ const profileSchema= new mongoose.Schema({
     message:{
         type:String
     },
-    HRsEmployerFeedBack:{
-        type:String
-    },
+    HRsEmployerFeedBack:[
+    
+],
     address:{
         type:String
     },
