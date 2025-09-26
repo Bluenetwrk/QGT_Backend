@@ -1,7 +1,7 @@
 const router = require('./Routes/StudentProfileRoutes');
 const User = require('./Schema/UserModel');
 const jwt = require('jsonwebtoken');
-const fetch = require('node-fetch'); // Ensure this is installed: npm install node-fetch
+//const fetch = require('node-fetch'); // Ensure this is installed: npm install node-fetch
 const URLSearchParams = require('url').URLSearchParams;
 
 const getAccessToken = async (code) => {
