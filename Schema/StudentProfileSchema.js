@@ -35,6 +35,9 @@ const profileSchema= new mongoose.Schema({
     employers:[
 
     ],
+    Qualification:{
+
+    },
     tenth:{
 
     },

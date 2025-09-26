@@ -1,9 +1,9 @@
-import express from 'express'
-import { linkedInCallback, getUser } from '../Authcontroller.js'
+const express = require('express');
+const { linkedInCallback, getUser } = require('../Authcontroller');
 
-const AuthRotues = express.Router()
+const AuthRoutes = express.Router();
 
-AuthRotues.get('/callback', linkedInCallback)
-AuthRotues.get('/get-user', getUser)
+AuthRoutes.get('/callback', linkedInCallback);
+AuthRoutes.get('/get-user', getUser);
 
-export default AuthRotues
+module.exports = AuthRoutes;
