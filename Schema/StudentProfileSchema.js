@@ -61,6 +61,9 @@ const profileSchema= new mongoose.Schema({
     type:String
 
     },
+    imageConsent:{
+        type:Boolean
+    },
     ipAddress:{
         type:String
     },
