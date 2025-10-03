@@ -35,12 +35,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Bluenetwrk/Quotegenerator_Backend.git"
+    "url": "git+https://github.com/Bluenetwrk/QGT_Backend.git"
   },
     "bugs": {
-    "url": "https://github.com/Bluenetwrk/Quotegenerator_Backend/issues"
+    "url": "https://github.com/Bluenetwrk/QGT_Backend/issues"
   },
-"homepage": "https://github.com/Bluenetwrk/Quotegenerator_Backend#readme",
+"homepage": "https://github.com/Bluenetwrk/QGT_Backend#readme",
   "description": "",
   "devDependencies": {
     "@babel/plugin-transform-class-properties": "^7.25.9",
