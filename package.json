@@ -35,12 +35,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Blueimpulse2517/ITwalkin_Backend_testrelease_2.0.1_0824.git"
+    "url": "git+https://github.com/Bluenetwrk/Quotegenerator_Backend.git"
   },
-  "bugs": {
-    "url": "https://github.com/Blueimpulse2517/ITwalkin_Backend_testrelease_2.0.1_0824/issues"
+    "bugs": {
+    "url": "https://github.com/Bluenetwrk/Quotegenerator_Backend/issues"
   },
-  "homepage": "https://github.com/Blueimpulse2517/ITwalkin_Backend_testrelease_2.0.1_0824#readme",
+"homepage": "https://github.com/Bluenetwrk/Quotegenerator_Backend#readme",
   "description": "",
   "devDependencies": {
     "@babel/plugin-transform-class-properties": "^7.25.9",
