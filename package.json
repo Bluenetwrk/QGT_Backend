@@ -40,10 +40,7 @@
     "bugs": {
     "url": "https://github.com/Bluenetwrk/QGT_Backend/issues"
   },
-  "engines": {
-  "node": "22.x"
-},
-"homepage": "https://github.com/Bluenetwrk/QGT_Backend#readme",
+ "homepage": "https://github.com/Bluenetwrk/QGT_Backend#readme",
   "description": "",
   "devDependencies": {
     "@babel/plugin-transform-class-properties": "^7.25.9",
