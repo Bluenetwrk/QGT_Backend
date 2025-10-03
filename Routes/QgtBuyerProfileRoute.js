@@ -65,7 +65,7 @@ var transporter = nodemailer.createTransport({
     from: 'bluenetwrk@gmail.com',
     to: result.email,
     subject: `Successfully Registered with Quotegenerator`,
-    html: '<p>Welcome to QuotationGenerator</p>'+'<p>click <a href="http://getquote.shop">QuoteGenerator</a> to explore more </p>'
+    html: '<p>Welcome to QuotationGenerator</p>'+'<p>click <a href="https://quote-generator-tool.vercel.app/"></a> to explore more </p>'
   };
   
   transporter.sendMail(mailOptions,  function(error, info){
