@@ -42,7 +42,7 @@
     "url": "https://github.com/Bluenetwrk/QGT_Backend/issues"
   },
   "engines": {
-  "node": "18.x"
+  "node": "22.x"
 },
 "homepage": "https://github.com/Bluenetwrk/QGT_Backend#readme",
   "description": "",
