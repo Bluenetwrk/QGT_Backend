@@ -1,10 +1,11 @@
 {
     "version":2,
     "builds":[
-    "index.js"
+    {"src": "*.js", "use" :"@vercel/node"}
     ],
     "routes":[
     {
+    "src": "/(.*)",
     "dest":"/"
     }
     ]
